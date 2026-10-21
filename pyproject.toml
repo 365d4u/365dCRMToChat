@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "365d-crm-to-chat"
+version = "0.1.0"
+description = "CRM message projection, safe cutover and batch media resolution"
+requires-python = ">=3.12"
+dependencies = []
+
+[project.optional-dependencies]
+rabbitmq = ["pika==1.3.2"]
+writer = ["pika==1.3.2", "PyMySQL>=1.1,<2"]
+
+[project.scripts]
+crm-to-chat = "crm_to_chat.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["crm_to_chat*"]

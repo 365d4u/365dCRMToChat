@@ -1,0 +1,21 @@
+[Unit]
+Description=Encrypted CRM RabbitMQ transport for message projection
+After=network-online.target
+Wants=network-online.target
+RequiresMountsFor=/data/365dCRMToChat
+
+[Service]
+User=www-data
+Group=webgroup
+ExecStart=/usr/bin/ssh -N -T -p 2209 -i /data/365dCRMToChat/state/tunnel_key -o BatchMode=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile=/data/365dCRMToChat/state/known_hosts -o ExitOnForwardFailure=yes -o ServerAliveInterval=30 -o ServerAliveCountMax=3 -L 127.0.0.1:35672:38.47.238.242:5672 ubuntu@154.197.57.214
+Restart=always
+RestartSec=5
+MemoryMax=64M
+CPUQuota=10%
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+
+[Install]
+WantedBy=multi-user.target

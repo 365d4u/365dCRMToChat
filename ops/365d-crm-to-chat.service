@@ -1,0 +1,27 @@
+[Unit]
+Description=CRM canonical message snapshots to chat_db
+After=network-online.target 365d-crm-to-chat-tunnel.service
+Wants=365d-crm-to-chat-tunnel.service
+RequiresMountsFor=/data/365dCRMToChat
+
+[Service]
+User=www-data
+Group=webgroup
+WorkingDirectory=/data/365dCRMToChat
+EnvironmentFile=/var/www/respond_webhook/respond_to_msgsite/.env
+EnvironmentFile=/data/365dCRMToChat/config/consumer.env
+Environment=CRM_TO_CHAT_DB_ENV_STYLE=respond
+Environment=PYTHONUNBUFFERED=1
+Environment=PYTHONDONTWRITEBYTECODE=1
+ExecStart=/data/365dCRMToChat/venv/bin/python -m crm_to_chat.consume
+Restart=always
+RestartSec=10
+MemoryMax=256M
+CPUQuota=30%
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+
+[Install]
+WantedBy=multi-user.target

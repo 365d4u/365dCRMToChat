@@ -1,0 +1,25 @@
+[Unit]
+Description=CRM verified historical customer references to chat_db
+After=network-online.target
+Wants=network-online.target
+RequiresMountsFor=/data/365dCRMToChat
+
+[Service]
+Type=oneshot
+User=root
+WorkingDirectory=/data/365dCRMToChat
+EnvironmentFile=/var/www/respond_webhook/respond_to_msgsite/.env
+EnvironmentFile=/data/365dCRMToChat/config/consumer.env
+ExecStart=/data/365dCRMToChat/venv/bin/python -m crm_to_chat.sync_references
+TimeoutStartSec=600
+CPUQuota=30%
+Nice=15
+MemoryHigh=384M
+MemoryMax=512M
+UMask=0077
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+ReadWritePaths=/data/365dCRMToChat/state/reference-sync
+

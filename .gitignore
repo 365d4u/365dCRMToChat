@@ -1,0 +1,17 @@
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+*.egg-info/
+.env
+.env.*
+!.env.example
+var/
+.idea/
+ops/*release.tar.gz
+ops/legacy-production_queue_handle.py
+ops/tunnel-authorized-key
+ops/crm-known-host
+ops/crm-to-chat-host-migration-*.tar.gz
+ops/tunnel-authorized-key-107
+ops/*.tar.gz

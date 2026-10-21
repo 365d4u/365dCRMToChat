@@ -1,0 +1,12 @@
+[Unit]
+Description=Refresh CRM historical customer references every 30 minutes
+
+[Timer]
+OnBootSec=5min
+OnUnitInactiveSec=30min
+RandomizedDelaySec=60
+Persistent=true
+Unit=365d-crm-reference-sync.service
+
+[Install]
+WantedBy=timers.target

@@ -1,0 +1,18 @@
+[Unit]
+Description=Bounded CRM message site ownership and profile resync
+After=network-online.target
+
+[Service]
+User=crm365d
+Group=crm365d
+WorkingDirectory=/data/365d-crm
+EnvironmentFile=/data/365d-crm/config/api.env
+ExecStart=/data/365d-crm/runtime/node/bin/node /data/365d-crm/releases/msgsite-6cf85ada5332a75d413ce375d5100ce5619b8bc6/msgsite-resync.mjs
+Restart=always
+RestartSec=10
+MemoryMax=128M
+CPUQuota=20%
+LogNamespace=365dcrm
+
+[Install]
+WantedBy=multi-user.target

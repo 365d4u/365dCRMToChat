@@ -1,0 +1,8 @@
+{
+  "resources": [
+    {"resourceId": "message/1001/0", "variant": "preview"},
+    {"resourceId": "message/1001/1", "variant": "original"},
+    {"resourceId": "message/1001/1", "variant": "thumbnail"},
+    {"resourceId": "message/1001/1", "variant": "original", "excludedCandidates": ["source"]}
+  ]
+}

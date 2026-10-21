@@ -1,0 +1,6 @@
+{
+  "ok": false,
+  "errorClass": "AssertionError",
+  "rolledBackConsumerOnly": true,
+  "active": true
+}

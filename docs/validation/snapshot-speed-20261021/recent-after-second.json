@@ -1,0 +1,148 @@
+{
+  "utc": "2026-10-21T12:04:11.177Z",
+  "readonly": true,
+  "boundedOutboxRows": 5000,
+  "boundedRecentMessageIds": 200,
+  "samples": [
+    {
+      "eventId": "crm-msgsite:5543598:2",
+      "messageId": "5543598",
+      "revision": "2",
+      "published_epoch": 1792584236.552998,
+      "occurred_epoch": 1792584236.263492
+    },
+    {
+      "eventId": "crm-msgsite:5543597:2",
+      "messageId": "5543597",
+      "revision": "2",
+      "published_epoch": 1792584228.944043,
+      "occurred_epoch": 1792584228.829663
+    },
+    {
+      "eventId": "crm-msgsite:5543596:2",
+      "messageId": "5543596",
+      "revision": "2",
+      "published_epoch": 1792584224.956877,
+      "occurred_epoch": 1792584224.744032
+    },
+    {
+      "eventId": "crm-msgsite:5543594:7",
+      "messageId": "5543594",
+      "revision": "7",
+      "published_epoch": 1792584221.292733,
+      "occurred_epoch": 1792584221.139109
+    },
+    {
+      "eventId": "crm-msgsite:5543592:7",
+      "messageId": "5543592",
+      "revision": "7",
+      "published_epoch": 1792584220.735515,
+      "occurred_epoch": 1792584220.586183
+    },
+    {
+      "eventId": "crm-msgsite:5543585:3",
+      "messageId": "5543585",
+      "revision": "3",
+      "published_epoch": 1792584218.648094,
+      "occurred_epoch": 1792584218.521457
+    },
+    {
+      "eventId": "crm-msgsite:5543595:2",
+      "messageId": "5543595",
+      "revision": "2",
+      "published_epoch": 1792584217.986976,
+      "occurred_epoch": 1792584217.742681
+    },
+    {
+      "eventId": "crm-msgsite:5543593:2",
+      "messageId": "5543593",
+      "revision": "2",
+      "published_epoch": 1792584213.860116,
+      "occurred_epoch": 1792584212.32102
+    },
+    {
+      "eventId": "crm-msgsite:5543590:2",
+      "messageId": "5543590",
+      "revision": "2",
+      "published_epoch": 1792584203.766444,
+      "occurred_epoch": 1792584203.458174
+    },
+    {
+      "eventId": "crm-msgsite:5543591:7",
+      "messageId": "5543591",
+      "revision": "7",
+      "published_epoch": 1792584200.553236,
+      "occurred_epoch": 1792584200.378578
+    },
+    {
+      "eventId": "crm-msgsite:5543587:2",
+      "messageId": "5543587",
+      "revision": "2",
+      "published_epoch": 1792584191.8234,
+      "occurred_epoch": 1792584191.722559
+    },
+    {
+      "eventId": "crm-msgsite:5543586:9",
+      "messageId": "5543586",
+      "revision": "9",
+      "published_epoch": 1792584190.268941,
+      "occurred_epoch": 1792584190.190656
+    },
+    {
+      "eventId": "crm-msgsite:5543570:4",
+      "messageId": "5543570",
+      "revision": "4",
+      "published_epoch": 1792584187.448095,
+      "occurred_epoch": 1792584186.947339
+    },
+    {
+      "eventId": "crm-msgsite:5543577:4",
+      "messageId": "5543577",
+      "revision": "4",
+      "published_epoch": 1792584187.448095,
+      "occurred_epoch": 1792584186.947339
+    },
+    {
+      "eventId": "crm-msgsite:5543583:3",
+      "messageId": "5543583",
+      "revision": "3",
+      "published_epoch": 1792584186.757183,
+      "occurred_epoch": 1792584186.579707
+    },
+    {
+      "eventId": "crm-msgsite:5543564:7",
+      "messageId": "5543564",
+      "revision": "7",
+      "published_epoch": 1792584186.611269,
+      "occurred_epoch": 1792584186.554663
+    },
+    {
+      "eventId": "crm-msgsite:5543589:2",
+      "messageId": "5543589",
+      "revision": "2",
+      "published_epoch": 1792584184.470187,
+      "occurred_epoch": 1792584184.210459
+    },
+    {
+      "eventId": "crm-msgsite:5543588:2",
+      "messageId": "5543588",
+      "revision": "2",
+      "published_epoch": 1792584184.07861,
+      "occurred_epoch": 1792584183.897049
+    },
+    {
+      "eventId": "crm-msgsite:5543565:8",
+      "messageId": "5543565",
+      "revision": "8",
+      "published_epoch": 1792584181.376152,
+      "occurred_epoch": 1792584181.081112
+    },
+    {
+      "eventId": "crm-msgsite:5543584:2",
+      "messageId": "5543584",
+      "revision": "2",
+      "published_epoch": 1792584176.915216,
+      "occurred_epoch": 1792584176.760376
+    }
+  ]
+}

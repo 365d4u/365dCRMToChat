@@ -1,0 +1,92 @@
+[
+  {
+    "readonly": true,
+    "select1Ms": {
+      "median": 0.11663883924484253,
+      "max": 0.1754947006702423
+    },
+    "summaryAggregateMs": 0.8069947361946106,
+    "sampleConversationRows": 57,
+    "indexes": [
+      {
+        "Key_name": "PRIMARY",
+        "Seq_in_index": 1,
+        "Column_name": "id",
+        "Non_unique": 0
+      },
+      {
+        "Key_name": "msg_id",
+        "Seq_in_index": 1,
+        "Column_name": "msg_id",
+        "Non_unique": 0
+      },
+      {
+        "Key_name": "conversation_role",
+        "Seq_in_index": 1,
+        "Column_name": "conversation_id",
+        "Non_unique": 1
+      },
+      {
+        "Key_name": "conversation_role",
+        "Seq_in_index": 2,
+        "Column_name": "role",
+        "Non_unique": 1
+      },
+      {
+        "Key_name": "update_date",
+        "Seq_in_index": 1,
+        "Column_name": "update_date",
+        "Non_unique": 1
+      },
+      {
+        "Key_name": "crm_customer_time",
+        "Seq_in_index": 1,
+        "Column_name": "conversation_id",
+        "Non_unique": 1
+      },
+      {
+        "Key_name": "crm_customer_time",
+        "Seq_in_index": 2,
+        "Column_name": "create_date",
+        "Non_unique": 1
+      },
+      {
+        "Key_name": "crm_customer_time",
+        "Seq_in_index": 3,
+        "Column_name": "msg_id",
+        "Non_unique": 1
+      },
+      {
+        "Key_name": "ft_content",
+        "Seq_in_index": 1,
+        "Column_name": "content",
+        "Non_unique": 1
+      }
+    ],
+    "aggregatePlan": [
+      {
+        "id": 1,
+        "select_type": "SIMPLE",
+        "table": "crm_contact_response",
+        "partitions": null,
+        "type": "ref",
+        "possible_keys": "conversation_role,crm_customer_time",
+        "key": "conversation_role",
+        "key_len": "282",
+        "ref": "const",
+        "rows": 60,
+        "filtered": 10.0,
+        "Extra": "Using where"
+      }
+    ]
+  },
+  {
+    "utc": "2026-10-21T11:48:09.252572+00:00",
+    "pid": "3015086",
+    "last60sProjections": {
+      "applied": 594,
+      "stale": 5
+    },
+    "cpuStat": "usage_usec 62490532\nuser_usec 51889734\nsystem_usec 10600797\ncore_sched.force_idle_usec 0\nnr_periods 36805\nnr_throttled 5\nthrottled_usec 340392\nnr_bursts 0\nburst_usec 0\n"
+  }
+]

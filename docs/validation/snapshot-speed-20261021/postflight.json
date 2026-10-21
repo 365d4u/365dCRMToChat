@@ -1,0 +1,63 @@
+{
+  "utc": "2026-10-21T12:02:06.905152+00:00",
+  "services": [
+    {
+      "MainPID": "0",
+      "NRestarts": "0",
+      "CPUQuotaPerSecUSec": "300ms",
+      "MemoryMax": "536870912",
+      "EnvironmentFiles": "/data/365dCRMToChat/config/consumer.env (ignore_errors=no)",
+      "WorkingDirectory": "/data/365dCRMToChat",
+      "Id": "365d-crm-reference-sync.service",
+      "ActiveState": "inactive",
+      "SubState": "dead",
+      "FragmentPath": "/etc/systemd/system/365d-crm-reference-sync.service",
+      "DropInPaths": ""
+    },
+    {
+      "MainPID": "3021216",
+      "NRestarts": "0",
+      "CPUQuotaPerSecUSec": "300ms",
+      "MemoryMax": "268435456",
+      "EnvironmentFiles": "/data/365dCRMToChat/config/consumer.env (ignore_errors=no)",
+      "WorkingDirectory": "/data/365dCRMToChat",
+      "Id": "365d-crm-to-chat.service",
+      "ActiveState": "active",
+      "SubState": "running",
+      "FragmentPath": "/etc/systemd/system/365d-crm-to-chat.service",
+      "DropInPaths": "",
+      "actualCwd": "/data/365dCRMToChat",
+      "entrypoints": [
+        "crm_to_chat.consume"
+      ],
+      "messaging": {
+        "CRM_TO_CHAT_AMQP_URL": {
+          "scheme": "amqps",
+          "host": "rabbitmq-cn-6eb50fbo101-us-west-1.mq.amqp.aliyuncs.com",
+          "port": 5671,
+          "vhost": "/"
+        },
+        "CRM_TO_CHAT_WORKSPACE_IDS": "1",
+        "CRM_TO_CHAT_WRITE_ENABLED": "true"
+      }
+    }
+  ],
+  "links": {},
+  "chatSourceHashes": {
+    "media.py": "20a41f83c18e0b4a892cd53664cb152772d8739e1ceae917156e24c84a0b41cb",
+    "consume.py": "61ac8c199fb232fd434aaf7f34f7944bd13472316f98b05e6578919526987e0f",
+    "writer.py": "c5617d4e98f391378a9e884c03662947fcfc911cca90ef8e2dfd6453ef007e66",
+    "cli.py": "b815b2b9b3b4ab19a4346e8f61826a3047308cbc1e5da3ee9ddbbcc68d2af5df",
+    "environment.py": "837152e91f253171ae7dfde64a99fa75fb12e6f346a170d8374bb4c75a9c279b",
+    "observer.py": "40b893caae56b8d0c7953ab0a953ea494d205c2175ecd173be1a6ef3167a57df",
+    "api.py": "6ed72e81e551cf4cf4233b199095c69697e01f7de314ab9500d6d44540217a1f",
+    "rabbitmq.py": "18b03e818b9a6feac0b1f85bc702b9534de31281a9948cdc6e433692a22c0a3a",
+    "sync_references.py": "352c35d9b3224f2d9868ef6dcc747ece06d5819aafaef3d403d19e0ecf4e0988",
+    "errors.py": "dabc7bc2c85bcd88f3cbbf8e49e89e314ee1b7076501b7f71c3f8724dd669b3a",
+    "__init__.py": "90702ec6eeb4092fc8a4c763d513f073352b2d607240b829201e38b5b55c0e32",
+    "config.py": "f5c8de8438c0a066e9041666fddd4af9e85756bd4537c5250c213775fefbd773",
+    "preview.py": "dded62ed9887f87208b7ce6dd3b5d22224ed5efe14fc6bc42e39f8406ced7866",
+    "contracts.py": "be3cc077ce94f09fef71bce8725d208505a843b6273ba3a7f22665138600009f",
+    "references.py": "ea79057510b33a78e50cb4751fe31a5d04ca368387a8b6fa048ba6d7f16a7e84"
+  }
+}

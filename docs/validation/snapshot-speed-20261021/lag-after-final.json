@@ -1,0 +1,200 @@
+{
+  "utc": "2026-10-21T12:02:49.354032+00:00",
+  "ok": true,
+  "readonly": true,
+  "pointLookupOnly": true,
+  "receiptTimestampResolutionSeconds": 1,
+  "publicationToReceiptSeconds": {
+    "samples": 20,
+    "min": -0.7033560276031494,
+    "max": -0.07117795944213867,
+    "median": -0.07117795944213867,
+    "p95": -0.07117795944213867
+  },
+  "publishedSnapshots": 20,
+  "receiptsFound": 20,
+  "projectionsAtLeastPublishedRevision": 20,
+  "distinctMessages": 20,
+  "samples": [
+    {
+      "eventId": "crm-msgsite:5543577:3",
+      "messageId": "5543577",
+      "revision": "3",
+      "published_epoch": 1792584149.071178,
+      "occurred_epoch": 1792584148.89795,
+      "receipt_epoch": 1792584149.0,
+      "projectedRevision": 3
+    },
+    {
+      "eventId": "crm-msgsite:5543504:9",
+      "messageId": "5543504",
+      "revision": "9",
+      "published_epoch": 1792584149.071178,
+      "occurred_epoch": 1792584148.89795,
+      "receipt_epoch": 1792584149.0,
+      "projectedRevision": 9
+    },
+    {
+      "eventId": "crm-msgsite:5543503:8",
+      "messageId": "5543503",
+      "revision": "8",
+      "published_epoch": 1792584149.071178,
+      "occurred_epoch": 1792584148.89795,
+      "receipt_epoch": 1792584149.0,
+      "projectedRevision": 8
+    },
+    {
+      "eventId": "crm-msgsite:5543501:8",
+      "messageId": "5543501",
+      "revision": "8",
+      "published_epoch": 1792584149.071178,
+      "occurred_epoch": 1792584148.89795,
+      "receipt_epoch": 1792584149.0,
+      "projectedRevision": 8
+    },
+    {
+      "eventId": "crm-msgsite:5543500:9",
+      "messageId": "5543500",
+      "revision": "9",
+      "published_epoch": 1792584149.071178,
+      "occurred_epoch": 1792584148.89795,
+      "receipt_epoch": 1792584149.0,
+      "projectedRevision": 9
+    },
+    {
+      "eventId": "crm-msgsite:5543496:9",
+      "messageId": "5543496",
+      "revision": "9",
+      "published_epoch": 1792584149.071178,
+      "occurred_epoch": 1792584148.89795,
+      "receipt_epoch": 1792584149.0,
+      "projectedRevision": 9
+    },
+    {
+      "eventId": "crm-msgsite:5543466:5",
+      "messageId": "5543466",
+      "revision": "5",
+      "published_epoch": 1792584149.071178,
+      "occurred_epoch": 1792584148.89795,
+      "receipt_epoch": 1792584149.0,
+      "projectedRevision": 5
+    },
+    {
+      "eventId": "crm-msgsite:5543458:10",
+      "messageId": "5543458",
+      "revision": "10",
+      "published_epoch": 1792584149.071178,
+      "occurred_epoch": 1792584148.89795,
+      "receipt_epoch": 1792584149.0,
+      "projectedRevision": 10
+    },
+    {
+      "eventId": "crm-msgsite:5543454:10",
+      "messageId": "5543454",
+      "revision": "10",
+      "published_epoch": 1792584149.071178,
+      "occurred_epoch": 1792584148.89795,
+      "receipt_epoch": 1792584149.0,
+      "projectedRevision": 10
+    },
+    {
+      "eventId": "crm-msgsite:5543453:10",
+      "messageId": "5543453",
+      "revision": "10",
+      "published_epoch": 1792584149.071178,
+      "occurred_epoch": 1792584148.89795,
+      "receipt_epoch": 1792584149.0,
+      "projectedRevision": 10
+    },
+    {
+      "eventId": "crm-msgsite:5543448:10",
+      "messageId": "5543448",
+      "revision": "10",
+      "published_epoch": 1792584149.071178,
+      "occurred_epoch": 1792584148.89795,
+      "receipt_epoch": 1792584149.0,
+      "projectedRevision": 10
+    },
+    {
+      "eventId": "crm-msgsite:5543441:6",
+      "messageId": "5543441",
+      "revision": "6",
+      "published_epoch": 1792584149.071178,
+      "occurred_epoch": 1792584148.89795,
+      "receipt_epoch": 1792584149.0,
+      "projectedRevision": 6
+    },
+    {
+      "eventId": "crm-msgsite:5543407:10",
+      "messageId": "5543407",
+      "revision": "10",
+      "published_epoch": 1792584149.071178,
+      "occurred_epoch": 1792584148.89795,
+      "receipt_epoch": 1792584149.0,
+      "projectedRevision": 10
+    },
+    {
+      "eventId": "crm-msgsite:5543406:10",
+      "messageId": "5543406",
+      "revision": "10",
+      "published_epoch": 1792584149.071178,
+      "occurred_epoch": 1792584148.89795,
+      "receipt_epoch": 1792584149.0,
+      "projectedRevision": 10
+    },
+    {
+      "eventId": "crm-msgsite:5543385:12",
+      "messageId": "5543385",
+      "revision": "12",
+      "published_epoch": 1792584149.071178,
+      "occurred_epoch": 1792584148.89795,
+      "receipt_epoch": 1792584149.0,
+      "projectedRevision": 12
+    },
+    {
+      "eventId": "crm-msgsite:5543384:11",
+      "messageId": "5543384",
+      "revision": "11",
+      "published_epoch": 1792584149.071178,
+      "occurred_epoch": 1792584148.89795,
+      "receipt_epoch": 1792584149.0,
+      "projectedRevision": 11
+    },
+    {
+      "eventId": "crm-msgsite:5543582:7",
+      "messageId": "5543582",
+      "revision": "7",
+      "published_epoch": 1792584146.688964,
+      "occurred_epoch": 1792584146.6351,
+      "receipt_epoch": 1792584146.0,
+      "projectedRevision": 9
+    },
+    {
+      "eventId": "crm-msgsite:5543570:3",
+      "messageId": "5543570",
+      "revision": "3",
+      "published_epoch": 1792584146.650589,
+      "occurred_epoch": 1792584146.463884,
+      "receipt_epoch": 1792584146.0,
+      "projectedRevision": 3
+    },
+    {
+      "eventId": "crm-msgsite:5543573:9",
+      "messageId": "5543573",
+      "revision": "9",
+      "published_epoch": 1792584141.703356,
+      "occurred_epoch": 1792584141.567121,
+      "receipt_epoch": 1792584141.0,
+      "projectedRevision": 9
+    },
+    {
+      "eventId": "crm-msgsite:5543567:3",
+      "messageId": "5543567",
+      "revision": "3",
+      "published_epoch": 1792584140.184032,
+      "occurred_epoch": 1792584139.935129,
+      "receipt_epoch": 1792584140.0,
+      "projectedRevision": 3
+    }
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "utc": "2026-10-21T12:02:35.717235+00:00",
+  "pid": "3021216",
+  "state": "NRestarts=0\nActiveState=active",
+  "windowSeconds": 60,
+  "projectedTimestampSpanSeconds": 60.12973499298096,
+  "observedEventsPerSecond": 48.39535714467541,
+  "events": {
+    "projected": 2911
+  },
+  "outcomes": {
+    "applied": 2824,
+    "stale": 87
+  },
+  "redelivered": 0,
+  "unstructuredErrors": 0,
+  "timings": {
+    "parseMs": {
+      "n": 2911,
+      "min": 0.061,
+      "median": 0.079,
+      "p95": 0.14,
+      "max": 0.336
+    },
+    "writeMs": {
+      "n": 2911,
+      "min": 1.513,
+      "median": 5.223,
+      "p95": 7.251,
+      "max": 11.423
+    },
+    "ackMs": {
+      "n": 2911,
+      "min": 0.061,
+      "median": 0.075,
+      "p95": 0.383,
+      "max": 0.74
+    },
+    "snapshotAgeMs": {
+      "n": 2911,
+      "min": 54.687,
+      "median": 262855.269,
+      "p95": 330757.214,
+      "max": 334995.84
+    }
+  },
+  "memory": [
+    "VmRSS:\t   27868 kB"
+  ],
+  "cpuStat": "usage_usec 12792866\nuser_usec 10473576\nsystem_usec 2319290\ncore_sched.force_idle_usec 0\nnr_periods 1289\nnr_throttled 6\nthrottled_usec 359941\nnr_bursts 0\nburst_usec 0\n"
+}

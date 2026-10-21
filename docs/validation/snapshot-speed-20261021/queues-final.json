@@ -1,0 +1,97 @@
+{
+  "utc": "2026-10-21T12:04:10.621Z",
+  "passed": true,
+  "queues": [
+    {
+      "queue": "contact_profile_queue",
+      "messageCount": 0,
+      "consumerCount": 1
+    },
+    {
+      "queue": "provider_ads_ingest_queue",
+      "messageCount": 0,
+      "consumerCount": 1
+    },
+    {
+      "queue": "provider_content_ingest_queue",
+      "messageCount": 0,
+      "consumerCount": 1
+    },
+    {
+      "queue": "provider_history_sync_queue",
+      "messageCount": 0,
+      "consumerCount": 1
+    },
+    {
+      "queue": "provider_media_queue",
+      "messageCount": 0,
+      "consumerCount": 1
+    },
+    {
+      "queue": "provider_send_queue",
+      "messageCount": 0,
+      "consumerCount": 1
+    },
+    {
+      "queue": "send_confirmation_queue",
+      "messageCount": 0,
+      "consumerCount": 1
+    },
+    {
+      "queue": "zernio_hook_queue",
+      "messageCount": 0,
+      "consumerCount": 1
+    },
+    {
+      "queue": "contact_profile_queue.dead",
+      "messageCount": 0,
+      "consumerCount": 0
+    },
+    {
+      "queue": "provider_ads_ingest_queue.dead",
+      "messageCount": 0,
+      "consumerCount": 0
+    },
+    {
+      "queue": "provider_content_ingest_queue.dead",
+      "messageCount": 0,
+      "consumerCount": 0
+    },
+    {
+      "queue": "provider_history_sync_queue.dead",
+      "messageCount": 0,
+      "consumerCount": 0
+    },
+    {
+      "queue": "provider_media_queue.dead",
+      "messageCount": 0,
+      "consumerCount": 0
+    },
+    {
+      "queue": "provider_send_queue.dead",
+      "messageCount": 0,
+      "consumerCount": 0
+    },
+    {
+      "queue": "send_confirmation_queue.dead",
+      "messageCount": 0,
+      "consumerCount": 0
+    },
+    {
+      "queue": "zernio_hook_queue.dead",
+      "messageCount": 0,
+      "consumerCount": 0
+    },
+    {
+      "queue": "365dCRMToChat.snapshot.v1",
+      "messageCount": 0,
+      "consumerCount": 1
+    },
+    {
+      "queue": "365dCRMToChat.snapshot.v1.invalid",
+      "messageCount": 0,
+      "consumerCount": 0
+    }
+  ],
+  "tls": true
+}

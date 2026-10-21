@@ -1,0 +1,113 @@
+{
+  "utc": "2026-10-21T12:01:01.089Z",
+  "readonly": true,
+  "boundedOutboxRows": 5000,
+  "boundedRecentMessageIds": 200,
+  "samples": [
+    {
+      "eventId": "crm-msgsite:5543564:6",
+      "messageId": "5543564",
+      "revision": "6",
+      "published_epoch": 1792584055.040599,
+      "occurred_epoch": 1792584054.89502
+    },
+    {
+      "eventId": "crm-msgsite:5543561:8",
+      "messageId": "5543561",
+      "revision": "8",
+      "published_epoch": 1792584052.696047,
+      "occurred_epoch": 1792584052.581385
+    },
+    {
+      "eventId": "crm-msgsite:5543560:6",
+      "messageId": "5543560",
+      "revision": "6",
+      "published_epoch": 1792584047.639563,
+      "occurred_epoch": 1792584047.482901
+    },
+    {
+      "eventId": "crm-msgsite:5543557:7",
+      "messageId": "5543557",
+      "revision": "7",
+      "published_epoch": 1792584046.174469,
+      "occurred_epoch": 1792584045.96288
+    },
+    {
+      "eventId": "crm-msgsite:5543559:8",
+      "messageId": "5543559",
+      "revision": "8",
+      "published_epoch": 1792584043.757462,
+      "occurred_epoch": 1792584043.615422
+    },
+    {
+      "eventId": "crm-msgsite:5543446:3",
+      "messageId": "5543446",
+      "revision": "3",
+      "published_epoch": 1792584043.301353,
+      "occurred_epoch": 1792584042.863228
+    },
+    {
+      "eventId": "crm-msgsite:5543555:8",
+      "messageId": "5543555",
+      "revision": "8",
+      "published_epoch": 1792584042.395104,
+      "occurred_epoch": 1792584042.29592
+    },
+    {
+      "eventId": "crm-msgsite:5543562:1",
+      "messageId": "5543562",
+      "revision": "1",
+      "published_epoch": 1792584040.782699,
+      "occurred_epoch": 1792584040.463192
+    },
+    {
+      "eventId": "crm-msgsite:5543551:6",
+      "messageId": "5543551",
+      "revision": "6",
+      "published_epoch": 1792584039.043126,
+      "occurred_epoch": 1792584038.893231
+    },
+    {
+      "eventId": "crm-msgsite:5543541:3",
+      "messageId": "5543541",
+      "revision": "3",
+      "published_epoch": 1792584035.438232,
+      "occurred_epoch": 1792584035.220115
+    },
+    {
+      "eventId": "crm-msgsite:5543554:7",
+      "messageId": "5543554",
+      "revision": "7",
+      "published_epoch": 1792584032.183776,
+      "occurred_epoch": 1792584032.048231
+    },
+    {
+      "eventId": "crm-msgsite:5543558:2",
+      "messageId": "5543558",
+      "revision": "2",
+      "published_epoch": 1792584030.624323,
+      "occurred_epoch": 1792584030.494176
+    },
+    {
+      "eventId": "crm-msgsite:5543499:3",
+      "messageId": "5543499",
+      "revision": "3",
+      "published_epoch": 1792584021.550401,
+      "occurred_epoch": 1792584021.381631
+    },
+    {
+      "eventId": "crm-msgsite:5543553:2",
+      "messageId": "5543553",
+      "revision": "2",
+      "published_epoch": 1792584018.765546,
+      "occurred_epoch": 1792584018.587682
+    },
+    {
+      "eventId": "crm-msgsite:5543552:2",
+      "messageId": "5543552",
+      "revision": "2",
+      "published_epoch": 1792584012.133711,
+      "occurred_epoch": 1792584012.001584
+    }
+  ]
+}

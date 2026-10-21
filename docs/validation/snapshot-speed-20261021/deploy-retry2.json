@@ -1,0 +1,16 @@
+{
+  "utc": "2026-10-21T12:00:09.866632+00:00",
+  "commit": "b5b97ac1c68e956a297da122ebc3e8258513efa7",
+  "pid": "3021216",
+  "previousPid": "3021067",
+  "ready": true,
+  "prefetch": 8,
+  "writers": 1,
+  "environmentUnchanged": true,
+  "unitAndLimitsUnchanged": true,
+  "otherModulesUnchanged": true,
+  "tunnelMasked": true,
+  "sourceSha": "61ac8c199fb232fd434aaf7f34f7944bd13472316f98b05e6578919526987e0f",
+  "configSha": "69d4b9af393ffd88fe53e894edeece586d816b36e5e29fce75393b4552801809",
+  "backup": "/data/365dCRMToChat/config/deployments/snapshot-speed-20261021-retry2/consume.py.before"
+}

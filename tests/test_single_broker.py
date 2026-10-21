@@ -5,7 +5,8 @@ from types import SimpleNamespace
 import unittest
 from unittest.mock import Mock, patch
 
-from crm_to_chat.consume import ProjectionFailure, receive_with, run, subscribe
+from crm_to_chat.consume import (IO_WAIT_SECONDS, PREFETCH_COUNT, ProjectionFailure,
+                                 receive_with, run, subscribe)
 from crm_to_chat.errors import IntegrationError
 from crm_to_chat.rabbitmq import Broker, brokers, connect_broker
 from crm_to_chat.writer import ChatWriter
@@ -16,9 +17,9 @@ PRIMARY = 'amqps://fixture:fixture@new.example.test/%2F'
 
 
 class Stop:
-    def __init__(self, rounds=4): self.rounds = rounds
+    def __init__(self, rounds=4): self.rounds = rounds; self.waits = []
     def is_set(self): return self.rounds <= 0
-    def wait(self, seconds): self.rounds -= 1
+    def wait(self, seconds): self.waits.append(seconds); self.rounds -= 1
 
 
 class SingleBrokerTests(unittest.TestCase):
@@ -142,6 +143,69 @@ class SingleBrokerTests(unittest.TestCase):
         run(factory, PRIMARY, stop=Stop(0), rabbit_connect=connect)
         factory.assert_not_called()
         connect.assert_not_called()
+
+    def test_connected_pump_waits_for_io_without_sleeping_between_deliveries(self):
+        rabbit, stop = self.rabbit(), Stop(4)
+        with redirect_stdout(StringIO()):
+            run(Mock(), PRIMARY, stop=stop, rabbit_connect=lambda _: rabbit)
+        self.assertGreater(rabbit.process_data_events.call_count, 0)
+        self.assertTrue(all(c.kwargs['time_limit'] > 0
+                            for c in rabbit.process_data_events.call_args_list))
+        self.assertEqual(stop.waits[:-1], [0] * (len(stop.waits) - 1))
+        self.assertLessEqual(IO_WAIT_SECONDS, 1)
+        rabbit.channel().basic_qos.assert_called_once_with(prefetch_count=PREFETCH_COUNT)
+        self.assertGreater(PREFETCH_COUNT, 1)
+        self.assertLessEqual(PREFETCH_COUNT, 16)
+
+    def test_failed_connection_waits_instead_of_busy_looping(self):
+        stop = Stop(4)
+        with redirect_stdout(StringIO()):
+            run(Mock(), PRIMARY, stop=stop, rabbit_connect=Mock(side_effect=ConnectionError()))
+        self.assertTrue(all(seconds > 0 for seconds in stop.waits))
+
+    def test_timings_record_no_payload_and_preserve_commit_before_ack(self):
+        db, channel = Connection(), Mock()
+        def ack(**_):
+            self.assertFalse(db.db.in_transaction)
+        channel.basic_ack.side_effect = ack
+        output = StringIO()
+        with redirect_stdout(output):
+            receive_with(ChatWriter(db), ('1',), 'primary')(
+                channel, SimpleNamespace(delivery_tag=1, redelivered=True), None, encoded(fixture()))
+        import json
+        record = json.loads(output.getvalue())
+        self.assertEqual(record['result'], 'applied')
+        self.assertTrue(record['redelivered'])
+        for key in ['parseMs', 'writeMs', 'ackMs', 'snapshotAgeMs']:
+            self.assertGreaterEqual(record[key], 0)
+        self.assertNotIn('message', record)
+        self.assertNotIn('eventId', record)
+
+    def test_prefetched_tail_stays_recoverable_after_database_failure(self):
+        db, channel = Connection(), Mock()
+        writer = ChatWriter(db)
+        events = [encoded(fixture(event_id=f'window-{i}', message_id=str(1001+i)))
+                  for i in range(PREFETCH_COUNT)]
+        calls = 0
+        def apply(event):
+            nonlocal calls
+            calls += 1
+            if calls == 2:
+                raise RuntimeError('synthetic database failure')
+            return writer.apply(event)
+        receive = receive_with(SimpleNamespace(apply=apply), ('1',), 'primary')
+        with redirect_stdout(StringIO()):
+            with self.assertRaises(ProjectionFailure):
+                for i, body in enumerate(events):
+                    receive(channel, SimpleNamespace(delivery_tag=i+1), None, body)
+            self.assertEqual(channel.basic_ack.call_count, 1)
+            self.assertEqual(db.db.execute('SELECT COUNT(*) FROM crm_event_receipt').fetchone()[0], 1)
+            # Simulate broker redelivery of the entire window after reconnect.
+            retry = receive_with(writer, ('1',), 'primary')
+            for i, body in enumerate(events):
+                retry(channel, SimpleNamespace(delivery_tag=i+1, redelivered=True), None, body)
+        self.assertEqual(db.db.execute('SELECT COUNT(*) FROM crm_event_receipt').fetchone()[0], PREFETCH_COUNT)
+        self.assertEqual(db.db.execute('SELECT COUNT(*) FROM crm_contact_response').fetchone()[0], PREFETCH_COUNT)
 
 
 if __name__ == '__main__': unittest.main()

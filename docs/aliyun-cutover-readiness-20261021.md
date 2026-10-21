@@ -1,5 +1,7 @@
 # 阿里云切换候选更新（未上线）
 
+状态更新：用户随后明确授权正式上线，已部署 main 0a41f003；当前以 [正式部署记录](aliyun-deployment-20261021.md) 为准。以下为准备时历史记录。
+
 2026-10-21。用户本轮要求准备切换，之前不合 main、不部署的限制仍保留；本轮没有重启、改环境、消费业务队列或写生产数据库。
 
 原项目现已有正式 Git 仓库和 origin/main `871b6d4858860f9dd63a2b80538404bf5bd4932b`。迁移改动从原隔离仓库 `80ec003` 移植为本正式仓库分支 `codex/aliyun-rabbitmq-migration` 的 `f7b25ac`。工作树：`E:/PycharmProjects/365dCRMToChat-aliyun-cutover-20261021`。未推送或合入 main，原独立隔离副本保留为证据。原迁移文档的“原项目没有 Git”是初轮准备时的历史状态。

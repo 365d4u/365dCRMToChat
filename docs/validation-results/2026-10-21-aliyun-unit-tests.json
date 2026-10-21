@@ -1,0 +1,8 @@
+{
+  "scope": "local synthetic fixtures only; no production database",
+  "runtime": "3.12.3",
+  "testsRun": 75,
+  "failures": 0,
+  "errors": 0,
+  "passed": true
+}

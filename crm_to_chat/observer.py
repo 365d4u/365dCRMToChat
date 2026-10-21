@@ -1,12 +1,11 @@
 """Observe future deliveries through an exclusive copy queue, never a business queue."""
 
-import logging
-import ssl
 import time
 import uuid
 
 from .contracts import parse_event
 from .errors import IntegrationError
+from .rabbitmq import Broker, connect_broker
 
 
 def observe(connection, exchange, routing_key, store, report, *, max_messages=100, duration=60.0):
@@ -44,22 +43,5 @@ def observe(connection, exchange, routing_key, store, report, *, max_messages=10
     return processed
 
 
-def connect(amqp_url):
-    # Load the optional dependency only for an explicitly requested observer run.
-    try:
-        import pika
-    except ImportError:
-        raise IntegrationError("rabbitmq_dependency_not_installed") from None
-    logging.getLogger("pika").setLevel(logging.CRITICAL)
-    try:
-        params = pika.URLParameters(amqp_url)
-        if amqp_url.startswith("amqps://"):
-            params.ssl_options = pika.SSLOptions(ssl.create_default_context(), params.host)
-        params.heartbeat = 30
-        params.socket_timeout = 10
-        params.stack_timeout = 15
-        params.blocked_connection_timeout = 10
-        params.connection_attempts = 1
-        return pika.BlockingConnection(params)
-    except Exception:
-        raise IntegrationError("rabbitmq_connection_failed") from None
+def connect(amqp_url, instance_id=''):
+    return connect_broker(Broker('observer', amqp_url, instance_id))

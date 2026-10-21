@@ -1,0 +1,720 @@
+{
+  "date": "2026-10-21",
+  "authorization": "User explicitly requested isolated production-host MQ tests without deployment",
+  "scope": {
+    "noDeployment": true,
+    "noRestart": true,
+    "noProductionFileWrites": true,
+    "noDatabaseAccess": true,
+    "noBusinessQueueAccess": true,
+    "syntheticResourcesOnly": true,
+    "credentialsViaPrivateStdin": true,
+    "sshHostKeyPolicy": "RejectPolicy using existing known_hosts"
+  },
+  "attempts": [
+    {
+      "host": "154.197.57.214",
+      "exitCode": 1,
+      "result": {
+        "runId": "3001f8727b58452eb755acac0fa0dcb9",
+        "startedAt": "2026-10-21T04:27:04.280Z",
+        "source": "web-api 154.197.57.214",
+        "synthetic": true,
+        "serial": 50,
+        "pipelined": 150,
+        "uniqueMessages": 0,
+        "duplicates": 0,
+        "corruptBodies": 0,
+        "recovery": {},
+        "cleanup": {
+          "complete": false
+        },
+        "limitations": [
+          "No broker restart/failover test",
+          "Not production host latency",
+          "No business queue or database accessed"
+        ],
+        "passed": false,
+        "failure": "Synthetic probe failed; no credential-bearing error retained",
+        "failureStage": "connect",
+        "completedAt": "2026-10-21T04:27:04.288Z",
+        "runtime": "v22.23.2"
+      },
+      "notes": "Initial harness adapter call signature was incorrect; failed before MQ connection; no resources created. Not counted as a broker test.",
+      "artifactSha256": "4eb35150ae46c2a659717326e40be7052e23e4caf5915c53f0be755f054ec611"
+    },
+    {
+      "host": "150.107.38.199",
+      "exitCode": 1,
+      "result": {
+        "runId": "fe671c72b57844b7ad9474336b12a7b0",
+        "startedAt": "2026-10-21T04:27:04.948Z",
+        "source": "webhook-worker 150.107.38.199",
+        "synthetic": true,
+        "serial": 50,
+        "pipelined": 150,
+        "uniqueMessages": 0,
+        "duplicates": 0,
+        "corruptBodies": 0,
+        "recovery": {},
+        "cleanup": {
+          "complete": false
+        },
+        "limitations": [
+          "No broker restart/failover test",
+          "Not production host latency",
+          "No business queue or database accessed"
+        ],
+        "passed": false,
+        "failure": "Synthetic probe failed; no credential-bearing error retained",
+        "failureStage": "connect",
+        "completedAt": "2026-10-21T04:27:04.953Z",
+        "runtime": "v24.20.0"
+      },
+      "notes": "Initial harness adapter call signature was incorrect; failed before MQ connection; no resources created. Not counted as a broker test.",
+      "artifactSha256": "4eb35150ae46c2a659717326e40be7052e23e4caf5915c53f0be755f054ec611"
+    },
+    {
+      "host": "154.197.57.214",
+      "exitCode": 0,
+      "result": {
+        "runId": "23d7a33c0ced4dea8bd1c4dbc9b39e27",
+        "startedAt": "2026-10-21T04:27:52.588Z",
+        "source": "web-api 154.197.57.214",
+        "synthetic": true,
+        "serial": 50,
+        "pipelined": 150,
+        "uniqueMessages": 201,
+        "duplicates": 0,
+        "corruptBodies": 0,
+        "recovery": {
+          "offlineMessageReceived": true,
+          "unacknowledgedRecovered": true,
+          "redelivered": true
+        },
+        "cleanup": {
+          "queue": true,
+          "deadLetterQueue": true,
+          "direct": true,
+          "topic": true
+        },
+        "limitations": [
+          "No broker restart/failover test",
+          "No business queue or database accessed"
+        ],
+        "connectionMs": 380.96,
+        "tls": {
+          "authorized": true,
+          "protocol": "TLSv1.2"
+        },
+        "benchmarkMs": 9489.33,
+        "confirmLatency": {
+          "count": 200,
+          "p50Ms": 29.44,
+          "p95Ms": 30.44,
+          "p99Ms": 32.06,
+          "maxMs": 33.16
+        },
+        "deliveryLatency": {
+          "count": 200,
+          "p50Ms": 100.82,
+          "p95Ms": 165.82,
+          "p99Ms": 166.83,
+          "maxMs": 169.56
+        },
+        "remainingMessages": 0,
+        "mandatoryReturnObserved": true,
+        "deadLetter": {
+          "rejectedMessageRetained": true,
+          "bodyMatches": true
+        },
+        "passed": true,
+        "completedAt": "2026-10-21T04:28:18.947Z",
+        "runtime": "v22.23.2"
+      },
+      "notes": "Initial correctly connected CRM test; Worker count=1 caused a non-pass despite complete receipts; retained as observed.",
+      "artifactSha256": "e97f489ca807944df2259f0c4aedccafd4c1be224210aff8424bffa2920432c0"
+    },
+    {
+      "host": "150.107.38.199",
+      "exitCode": 1,
+      "result": {
+        "runId": "e951dc9cca9f4e77a75e44d35b05e802",
+        "startedAt": "2026-10-21T04:27:53.303Z",
+        "source": "webhook-worker 150.107.38.199",
+        "synthetic": true,
+        "serial": 50,
+        "pipelined": 150,
+        "uniqueMessages": 201,
+        "duplicates": 0,
+        "corruptBodies": 0,
+        "recovery": {
+          "offlineMessageReceived": true,
+          "unacknowledgedRecovered": true,
+          "redelivered": true
+        },
+        "cleanup": {
+          "queue": true,
+          "deadLetterQueue": true,
+          "direct": true,
+          "topic": true
+        },
+        "limitations": [
+          "No broker restart/failover test",
+          "No business queue or database accessed"
+        ],
+        "connectionMs": 187.84,
+        "tls": {
+          "authorized": true,
+          "protocol": "TLSv1.2"
+        },
+        "benchmarkMs": 9501.18,
+        "confirmLatency": {
+          "count": 200,
+          "p50Ms": 33.26,
+          "p95Ms": 37.61,
+          "p99Ms": 37.87,
+          "maxMs": 37.96
+        },
+        "deliveryLatency": {
+          "count": 200,
+          "p50Ms": 100.16,
+          "p95Ms": 166,
+          "p99Ms": 167.34,
+          "maxMs": 168.99
+        },
+        "remainingMessages": 1,
+        "mandatoryReturnObserved": true,
+        "passed": false,
+        "failure": "Synthetic probe failed; no credential-bearing error retained",
+        "failureStage": "mandatory-return",
+        "completedAt": "2026-10-21T04:28:09.289Z",
+        "runtime": "v24.20.0"
+      },
+      "notes": "Initial correctly connected CRM test; Worker count=1 caused a non-pass despite complete receipts; retained as observed.",
+      "artifactSha256": "e97f489ca807944df2259f0c4aedccafd4c1be224210aff8424bffa2920432c0"
+    },
+    {
+      "host": "150.107.38.199",
+      "exitCode": 0,
+      "result": {
+        "runId": "c5193cabc0f444ed861b058bd0f10b54",
+        "startedAt": "2026-10-21T04:30:09.926Z",
+        "source": "webhook-worker 150.107.38.199",
+        "synthetic": true,
+        "serial": 50,
+        "pipelined": 150,
+        "uniqueMessages": 201,
+        "duplicates": 0,
+        "corruptBodies": 0,
+        "recovery": {
+          "offlineMessageReceived": true,
+          "unacknowledgedRecovered": true,
+          "redelivered": true
+        },
+        "cleanup": {
+          "queue": true,
+          "deadLetterQueue": true,
+          "direct": true,
+          "topic": true
+        },
+        "limitations": [
+          "No broker restart/failover test",
+          "No business queue or database accessed"
+        ],
+        "connectionMs": 528.51,
+        "tls": {
+          "authorized": true,
+          "protocol": "TLSv1.2"
+        },
+        "benchmarkMs": 2337.33,
+        "confirmLatency": {
+          "count": 200,
+          "p50Ms": 29.5,
+          "p95Ms": 38.19,
+          "p99Ms": 38.4,
+          "maxMs": 38.42
+        },
+        "deliveryLatency": {
+          "count": 200,
+          "p50Ms": 99.15,
+          "p95Ms": 102.29,
+          "p99Ms": 103.05,
+          "maxMs": 103.17
+        },
+        "remainingMessageCountSamples": [
+          0
+        ],
+        "remainingMessages": 0,
+        "mandatoryReturnObserved": true,
+        "deadLetter": {
+          "rejectedMessageRetained": true,
+          "bodyMatches": true
+        },
+        "passed": true,
+        "completedAt": "2026-10-21T04:30:29.098Z",
+        "runtime": "v24.20.0"
+      },
+      "notes": "ACK channel closed before reopen/count check; all protocol and count checks passed.",
+      "artifactSha256": "2fc82d365da12a53162f947322ecc18f12dff58ba55356104e8f5fd0ccadcd50"
+    },
+    {
+      "host": "107.150.104.4",
+      "exitCode": 1,
+      "result": {
+        "runId": "d5999461b3eb419fb1c35bd3ea944d38",
+        "synthetic": true,
+        "normalMessages": 100,
+        "duplicates": 0,
+        "corruptBodies": 0,
+        "cleanup": {
+          "queue": true,
+          "deadLetterQueue": true,
+          "direct": true,
+          "topic": true
+        },
+        "passed": false,
+        "connectionMs": 221.07,
+        "uniqueNormalMessages": 100,
+        "confirmLatency": {
+          "count": 100,
+          "p50Ms": 15.51,
+          "p95Ms": 16.04,
+          "maxMs": 21.71
+        },
+        "deliveryLatency": {
+          "count": 100,
+          "p50Ms": 260.12,
+          "p95Ms": 266.31,
+          "maxMs": 269.45
+        },
+        "recovery": {
+          "offlineMessageReceived": true,
+          "unacknowledgedRecovered": true,
+          "redelivered": true
+        },
+        "mandatoryReturnObserved": true,
+        "failureStage": "dead-letter",
+        "failureType": "RuntimeError",
+        "source": "crm-to-chat 107.150.104.4",
+        "runtime": "3.12.3",
+        "pikaVersion": "1.3.2",
+        "startedAtUnix": 1792557008.6210048,
+        "completedAtUnix": 1792557049.621065,
+        "limitations": [
+          "Synthetic only; no database or business queue accessed",
+          "No broker failover test",
+          "100 serial messages; not a throughput test"
+        ]
+      },
+      "notes": "First Python test received 100 and recovered unacked delivery; dead-letter stage incomplete. Consumer cancellation occurred before ACK/NACK in this harness.",
+      "artifactSha256": "fc210ca36ddf4c8fda69e8ce63330745db4634bfa4b67321464b73c63ab8d5df"
+    },
+    {
+      "host": "107.150.104.4",
+      "exitCode": 1,
+      "result": {
+        "runId": "e4721bfdfd634c8282d5f09ead17ef2d",
+        "synthetic": true,
+        "normalMessages": 100,
+        "duplicates": 0,
+        "corruptBodies": 0,
+        "cleanup": {
+          "queue": true,
+          "deadLetterQueue": true,
+          "direct": true,
+          "topic": true
+        },
+        "passed": false,
+        "connectionMs": 314.65,
+        "uniqueNormalMessages": 100,
+        "confirmLatency": {
+          "count": 100,
+          "p50Ms": 14.49,
+          "p95Ms": 14.99,
+          "maxMs": 22.25
+        },
+        "deliveryLatency": {
+          "count": 100,
+          "p50Ms": 259.26,
+          "p95Ms": 270.96,
+          "maxMs": 272.9
+        },
+        "recovery": {
+          "offlineMessageReceived": true,
+          "unacknowledgedRecovered": true,
+          "redelivered": true
+        },
+        "mandatoryReturnObserved": true,
+        "deadLetter": {
+          "rejectedMessageRetained": true,
+          "bodyMatches": true
+        },
+        "remainingMessageCountSamples": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "remainingMessages": 1,
+        "source": "crm-to-chat 107.150.104.4",
+        "runtime": "3.12.3",
+        "pikaVersion": "1.3.2",
+        "startedAtUnix": 1792557095.5663533,
+        "completedAtUnix": 1792557147.3310778,
+        "limitations": [
+          "Synthetic only; no database or business queue accessed",
+          "No broker failover test",
+          "100 serial messages; not a throughput test"
+        ]
+      },
+      "notes": "ACK/NACK before channel teardown; all receipt/recovery/DLQ checks passed but reported source queue count remained 1 for 20 seconds. Overall non-pass retained; cause unproven.",
+      "artifactSha256": "df15885e54570f4c62cf54440701dc4cf3888348a94956870d6944a9c8a5f4fd"
+    },
+    {
+      "host": "107.150.104.4",
+      "exitCode": 0,
+      "result": {
+        "runId": "d2cebe383d314c8fa80dbe04e116db35",
+        "synthetic": true,
+        "normalMessages": 20,
+        "duplicates": 0,
+        "corruptBodies": 0,
+        "cleanup": {
+          "queue": true,
+          "deadLetterQueue": true,
+          "direct": true,
+          "topic": true
+        },
+        "passed": true,
+        "connectionMs": 334.15,
+        "uniqueNormalMessages": 20,
+        "confirmLatency": {
+          "count": 20,
+          "p50Ms": 15.35,
+          "p95Ms": 18.03,
+          "maxMs": 22.35
+        },
+        "deliveryLatency": {
+          "count": 20,
+          "p50Ms": 259.24,
+          "p95Ms": 268.54,
+          "maxMs": 269.11
+        },
+        "recovery": {
+          "offlineMessageReceived": true,
+          "unacknowledgedRecovered": true,
+          "redelivered": true
+        },
+        "mandatoryReturnObserved": true,
+        "deadLetter": {
+          "rejectedMessageRetained": true,
+          "bodyMatches": true
+        },
+        "remainingMessageCountSamples": [
+          0
+        ],
+        "remainingMessages": 0,
+        "source": "crm-to-chat 107.150.104.4",
+        "runtime": "3.12.3",
+        "pikaVersion": "1.3.2",
+        "startedAtUnix": 1792557254.41262,
+        "completedAtUnix": 1792557266.243519,
+        "limitations": [
+          "Synthetic only; no database or business queue accessed",
+          "No broker failover test",
+          "Serial messages; not a throughput test"
+        ]
+      },
+      "notes": "20-message bounded follow-up using ACK-before-teardown; all checks and count=0 passed.",
+      "artifactSha256": "1c1d0ff85b45c81f55b9365cfe1fbe50e94aee46f678fd0dff4bac8fc7403cfd"
+    },
+    {
+      "host": "107.150.104.4",
+      "exitCode": 0,
+      "result": {
+        "runId": "335c295c1163441ab1a9eed3c8296392",
+        "synthetic": true,
+        "normalMessages": 100,
+        "duplicates": 0,
+        "corruptBodies": 0,
+        "cleanup": {
+          "queue": true,
+          "deadLetterQueue": true,
+          "direct": true,
+          "topic": true
+        },
+        "passed": true,
+        "connectionMs": 209.98,
+        "uniqueNormalMessages": 100,
+        "confirmLatency": {
+          "count": 100,
+          "p50Ms": 14.55,
+          "p95Ms": 15.04,
+          "maxMs": 21.04
+        },
+        "deliveryLatency": {
+          "count": 100,
+          "p50Ms": 262.79,
+          "p95Ms": 268.63,
+          "maxMs": 270.43
+        },
+        "recovery": {
+          "offlineMessageReceived": true,
+          "unacknowledgedRecovered": true,
+          "redelivered": true
+        },
+        "mandatoryReturnObserved": true,
+        "deadLetter": {
+          "rejectedMessageRetained": true,
+          "bodyMatches": true
+        },
+        "remainingMessageCountSamples": [
+          0
+        ],
+        "remainingMessages": 0,
+        "source": "crm-to-chat 107.150.104.4",
+        "runtime": "3.12.3",
+        "pikaVersion": "1.3.2",
+        "startedAtUnix": 1792557320.0259695,
+        "completedAtUnix": 1792557351.037374,
+        "limitations": [
+          "Synthetic only; no database or business queue accessed",
+          "No broker failover test",
+          "Serial messages; not a throughput test"
+        ]
+      },
+      "notes": "Final 100-message Pika run with post-ACK observation available: all correctness checks passed, reported count zero; intermittent earlier count anomaly not reproduced or conclusively explained.",
+      "artifactSha256": "1c1d0ff85b45c81f55b9365cfe1fbe50e94aee46f678fd0dff4bac8fc7403cfd"
+    }
+  ],
+  "before": [
+    {
+      "host": "154.197.57.214",
+      "exitCode": 0,
+      "stdout": "10-11-171-14\n/usr/local/bin/node\n/usr/bin/python3\nMainPID=34594\nNRestarts=0\nId=365d-crm-api.service\nActiveState=active\n\nMainPID=0\nNRestarts=0\nId=365d-crm-webhook.service\nActiveState=inactive\n\nMainPID=0\nNRestarts=0\nId=365d-crm-worker.service\nActiveState=inactive\n\nMainPID=0\nNRestarts=0\nId=365d-crm-media-worker.service\nActiveState=inactive\n\nMainPID=0\nNRestarts=0\nId=365d-crm-to-chat.service\nActiveState=inactive\n\nMainPID=0\nNRestarts=0\nId=365d-crm-to-chat-tunnel.service\nActiveState=inactive\n",
+      "stderr": ""
+    },
+    {
+      "host": "150.107.38.199",
+      "exitCode": 0,
+      "stdout": "10-11-153-110\n/usr/local/bin/node\n/usr/bin/python3\nMainPID=0\nNRestarts=0\nId=365d-crm-api.service\nActiveState=inactive\n\nMainPID=2191395\nNRestarts=0\nId=365d-crm-webhook.service\nActiveState=active\n\nMainPID=2191319\nNRestarts=0\nId=365d-crm-worker.service\nActiveState=active\n\nMainPID=1779670\nNRestarts=0\nId=365d-crm-media-worker.service\nActiveState=active\n\nMainPID=0\nNRestarts=0\nId=365d-crm-to-chat.service\nActiveState=inactive\n\nMainPID=0\nNRestarts=0\nId=365d-crm-to-chat-tunnel.service\nActiveState=inactive\n",
+      "stderr": ""
+    },
+    {
+      "host": "107.150.104.4",
+      "exitCode": 0,
+      "stdout": "10-11-162-194\n/usr/bin/python3\nMainPID=0\nNRestarts=0\nId=365d-crm-api.service\nActiveState=inactive\n\nMainPID=0\nNRestarts=0\nId=365d-crm-webhook.service\nActiveState=inactive\n\nMainPID=0\nNRestarts=0\nId=365d-crm-worker.service\nActiveState=inactive\n\nMainPID=0\nNRestarts=0\nId=365d-crm-media-worker.service\nActiveState=inactive\n\nMainPID=2195290\nNRestarts=0\nId=365d-crm-to-chat.service\nActiveState=active\n\nMainPID=2194959\nNRestarts=0\nId=365d-crm-to-chat-tunnel.service\nActiveState=active\n",
+      "stderr": ""
+    }
+  ],
+  "after": [
+    {
+      "host": "154.197.57.214",
+      "exitCode": 0,
+      "stdout": "MainPID=34594\nNRestarts=0\nId=365d-crm-api.service\nActiveState=active\n\nMainPID=4117484\nNRestarts=0\nId=365d-crm-message-sender-0e431ee34aeb549997a7a6f01a2bdce7fc5d7f64.service\nActiveState=active\n\nMainPID=4117406\nNRestarts=0\nId=365d-crm-message-confirmation-0e431ee34aeb549997a7a6f01a2bdce7fc5d7f64.service\nActiveState=active\n",
+      "stderr": ""
+    },
+    {
+      "host": "150.107.38.199",
+      "exitCode": 0,
+      "stdout": "MainPID=2191395\nNRestarts=0\nId=365d-crm-webhook.service\nActiveState=active\n\nMainPID=2191319\nNRestarts=0\nId=365d-crm-worker.service\nActiveState=active\n\nMainPID=1779670\nNRestarts=0\nId=365d-crm-media-worker.service\nActiveState=active\n",
+      "stderr": ""
+    },
+    {
+      "host": "107.150.104.4",
+      "exitCode": 0,
+      "stdout": "MainPID=2195290\nNRestarts=0\nId=365d-crm-to-chat.service\nActiveState=active\n\nMainPID=2194959\nNRestarts=0\nId=365d-crm-to-chat-tunnel.service\nActiveState=active\n",
+      "stderr": ""
+    }
+  ],
+  "sources": {
+    "crmBranch": "codex/aliyun-rabbitmq-migration",
+    "crmHelperSha256": "cb0bca3132824016baf4a1d7bff718b7934a5a22417ad62897658377ad333435",
+    "crmProbeSha256": "52d7776d8e04a0bcc3c2e088bbc586da86169963c518c1fcf8884970ae3a2ac2",
+    "crmToChatBranch": "codex/aliyun-rabbitmq-migration",
+    "pythonHelperSha256": "7dbb1e9837bfccd7913df6ccd4eba49bc6b3a0fdd8268f4e41ca115f6b5d8dd4",
+    "pythonProbeSha256": "1c1d0ff85b45c81f55b9365cfe1fbe50e94aee46f678fd0dff4bac8fc7403cfd",
+    "artifactNote": "Per-attempt artifactSha256 is the exact in-memory Node bundle or Python probe source used in that attempt; helper source hashes are listed separately."
+  },
+  "recordedAt": "2026-10-21T04:36:45.158Z",
+  "limitations": [
+    "No production DB, business payload, business queue or Provider send tested",
+    "No deployment, configuration switch, old-queue drain, sustained load or broker restart/failover tested",
+    "Earlier reported remaining=1 observations retained; later full runs reported zero, cause remains unproven; sustained ready/unacked verification remains a cutover gate",
+    "Pika uses 100 serial normal messages; Node uses 50 serial plus 150 pipelined messages; timings are not a head-to-head throughput comparison",
+    "Baseline service inventory included inactive units belonging to other hosts; only each host actual roles are assessed"
+  ]
+}

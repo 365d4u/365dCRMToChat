@@ -2,6 +2,7 @@ import argparse
 from collections import Counter
 from contextlib import nullcontext
 import json
+import os
 from pathlib import Path
 import sys
 from wsgiref.simple_server import WSGIRequestHandler, WSGIServer, make_server
@@ -137,7 +138,7 @@ def main(argv=None):
         if args.command == "observe":
             amqp_url, exchange, routing_key = observer_config()
             with PreviewStore(args.state) as store:
-                connection = connect(amqp_url)
+                connection = connect(amqp_url, os.environ.get('CRM_TO_CHAT_AMQP_INSTANCE_ID', ''))
                 try:
                     count = observe(connection, exchange, routing_key, store, emit,
                                     max_messages=args.max_messages, duration=args.seconds)

@@ -33,16 +33,9 @@ def endpoint(url, instance_id=''):
         raise IntegrationError('missing_or_invalid_amqp_configuration') from None
 
 
-def brokers(primary_url, instance_id='', drain_url='', drain_instance_id=''):
-    primary_endpoint = endpoint(primary_url, instance_id)
-    result = [Broker('primary', primary_url, instance_id)]
-    if drain_url:
-        if endpoint(drain_url, drain_instance_id) == primary_endpoint:
-            raise IntegrationError('duplicate_amqp_broker')
-        result.append(Broker('drain', drain_url, drain_instance_id))
-    elif drain_instance_id:
-        raise IntegrationError('drain_amqp_url_required')
-    return tuple(result)
+def brokers(primary_url, instance_id=''):
+    endpoint(primary_url, instance_id)
+    return (Broker('primary', primary_url, instance_id),)
 
 
 def connect_broker(broker):

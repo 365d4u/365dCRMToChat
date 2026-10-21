@@ -1,4 +1,4 @@
-"""Two AMQP sources, one serial database writer; commit before source-specific ACK."""
+"""One AMQP source, one serial database writer; commit before ACK."""
 import json
 import os
 import signal
@@ -60,9 +60,9 @@ def subscribe(rabbit, writer, workspace_ids, exchange, role):
 
 
 def run(connection_factory, amqp_url, exchange='365d.realtime.v1', workspace_ids=('1',), *,
-        instance_id='', drain_url='', drain_instance_id='', stop=None,
+        instance_id='', stop=None,
         rabbit_connect=connect_broker, clock=time.monotonic):
-    sources = brokers(amqp_url, instance_id, drain_url, drain_instance_id)
+    sources = brokers(amqp_url, instance_id)
     stop = threading.Event() if stop is None else stop
     while not stop.is_set():
         database = None
@@ -71,7 +71,7 @@ def run(connection_factory, amqp_url, exchange='365d.realtime.v1', workspace_ids
             database = connection_factory()
             writer = ChatWriter(database)
             while not stop.is_set():
-                # Pump all live sources before a bounded reconnect attempt.
+                # Pump the source before a bounded reconnect attempt.
                 # Callbacks share one thread, writer and database session.
                 for state in states:
                     rabbit = state['connection']
@@ -125,11 +125,9 @@ def main():
     scopes = tuple(os.environ.get('CRM_TO_CHAT_WORKSPACE_IDS', '').split(','))
     if not scopes or any(not x.isascii() or not x.isdigit() or int(x) <= 0 for x in scopes):
         raise SystemExit('CRM_TO_CHAT_WORKSPACE_IDS must explicitly list allowed workspaces')
-    options = dict(instance_id=os.environ.get('CRM_TO_CHAT_AMQP_INSTANCE_ID', ''),
-                   drain_url=os.environ.get('CRM_TO_CHAT_DRAIN_AMQP_URL', ''),
-                   drain_instance_id=os.environ.get('CRM_TO_CHAT_DRAIN_AMQP_INSTANCE_ID', ''))
+    options = dict(instance_id=os.environ.get('CRM_TO_CHAT_AMQP_INSTANCE_ID', ''))
     amqp_url = os.environ['CRM_TO_CHAT_AMQP_URL']
-    brokers(amqp_url, options['instance_id'], options['drain_url'], options['drain_instance_id'])
+    brokers(amqp_url, options['instance_id'])
     import pymysql
     configuration = mysql_config(os.environ)
     def connect():

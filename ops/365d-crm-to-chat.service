@@ -1,7 +1,7 @@
 [Unit]
 Description=CRM canonical message snapshots to chat_db
-After=network-online.target 365d-crm-to-chat-tunnel.service
-Wants=365d-crm-to-chat-tunnel.service
+After=network-online.target
+Wants=network-online.target
 RequiresMountsFor=/data/365dCRMToChat
 
 [Service]

@@ -11,5 +11,5 @@ shutil.copy2(path,backup/'consumer-before-enable.env')
 path.write_text(content.replace('CRM_TO_CHAT_WRITE_ENABLED=false','CRM_TO_CHAT_WRITE_ENABLED=true'))
 print('Target writer explicitly enabled')
 PY
-sudo -n systemctl enable --now 365d-crm-to-chat-tunnel.service 365d-crm-to-chat.service
-systemctl show 365d-crm-to-chat 365d-crm-to-chat-tunnel -p Id -p ActiveState -p SubState -p MainPID -p NRestarts
+sudo -n systemctl enable --now 365d-crm-to-chat.service
+systemctl show 365d-crm-to-chat -p Id -p ActiveState -p SubState -p MainPID -p NRestarts

@@ -41,3 +41,7 @@ Reference synchronization uses its dedicated oneshot service and timer, a
 source-restricted forced-command SSH key, and CRM-owned verified references.
 Only automatically-owned mapping rows may be refreshed or revoked. Preserve
 manual mappings, old message tables, runtime configuration and recovery backups.
+
+## Main-only releases and temporary workspaces
+
+User policy (2026-11-05): the canonical project and pushed `origin/main` are the only final release source. Default to detached temporary worktrees; create local task branches only when necessary. Integrate, validate and push to main before release, then archive evidence and retire completed task workspaces and separately verified merged branches. Preserve active/unmerged work and dependency consumers. Follow `docs/runbooks/release-source-policy.md` in the repository root.

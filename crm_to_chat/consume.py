@@ -6,7 +6,7 @@ import threading
 import time
 from datetime import datetime
 
-from .contracts import parse_event
+from .contracts import parse_customer_avatar_event, parse_event
 from .errors import ContractError
 from .writer import ChatWriter
 from .environment import mysql_config
@@ -14,6 +14,7 @@ from .rabbitmq import brokers, connect_broker
 
 QUEUE = '365dCRMToChat.snapshot.v1'
 DLQ = QUEUE + '.invalid'
+CUSTOMER_AVATAR_ROUTE = 'crm.customer.avatar.v1'
 # Keep a small transport window without adding concurrent database writers.
 PREFETCH_COUNT = 8
 IO_WAIT_SECONDS = 0.25
@@ -31,11 +32,14 @@ def close(resource):
             pass
 
 
-def receive_with(writer, workspace_ids, role):
+def receive_with(writer, workspace_ids, role, *, customer_avatar_events=False):
     def receive(channel, method, properties, body):
         started = time.monotonic()
         try:
-            event = parse_event(body)
+            if customer_avatar_events and getattr(method, 'routing_key', None) == CUSTOMER_AVATAR_ROUTE:
+                event = parse_customer_avatar_event(body)
+            else:
+                event = parse_event(body)
             if event.workspace_id not in workspace_ids:
                 raise ContractError('workspace_not_allowed')
             parsed = time.monotonic()
@@ -61,22 +65,25 @@ def receive_with(writer, workspace_ids, role):
     return receive
 
 
-def subscribe(rabbit, writer, workspace_ids, exchange, role):
+def subscribe(rabbit, writer, workspace_ids, exchange, role, *, customer_avatar_events=False):
     channel = rabbit.channel()
     channel.exchange_declare(exchange=exchange, passive=True)
     channel.queue_declare(queue=DLQ, durable=True)
     channel.queue_declare(queue=QUEUE, durable=True,
         arguments={'x-dead-letter-exchange': '', 'x-dead-letter-routing-key': DLQ})
     channel.queue_bind(queue=QUEUE, exchange=exchange, routing_key='crm.message.snapshot.v1')
+    if customer_avatar_events:
+        channel.queue_bind(queue=QUEUE, exchange=exchange, routing_key=CUSTOMER_AVATAR_ROUTE)
     channel.basic_qos(prefetch_count=PREFETCH_COUNT)
     channel.basic_consume(queue=QUEUE,
-        on_message_callback=receive_with(writer, workspace_ids, role), auto_ack=False)
+        on_message_callback=receive_with(writer, workspace_ids, role,
+                                         customer_avatar_events=customer_avatar_events), auto_ack=False)
     print(json.dumps({'event': 'ready', 'source': role, 'queue': QUEUE,
         'prefetch': PREFETCH_COUNT, 'writers': 1}), flush=True)
 
 
 def run(connection_factory, amqp_url, exchange='365d.realtime.v1', workspace_ids=('1',), *,
-        instance_id='', stop=None,
+        instance_id='', stop=None, customer_avatar_events=False,
         rabbit_connect=connect_broker, clock=time.monotonic):
     sources = brokers(amqp_url, instance_id)
     stop = threading.Event() if stop is None else stop
@@ -85,7 +92,11 @@ def run(connection_factory, amqp_url, exchange='365d.realtime.v1', workspace_ids
         states = [{'source': source, 'connection': None, 'retry_at': 0} for source in sources]
         try:
             database = connection_factory()
-            writer = ChatWriter(database)
+            if customer_avatar_events:
+                with database.cursor() as cursor:
+                    cursor.execute('SELECT workspace_id,customer_id,revision,avatar_url FROM crm_customer_avatar LIMIT 0')
+                database.rollback()
+            writer = ChatWriter(database, customer_avatar_events=customer_avatar_events)
             while not stop.is_set():
                 # Pump the source before a bounded reconnect attempt.
                 # Callbacks share one thread, writer and database session.
@@ -115,7 +126,8 @@ def run(connection_factory, amqp_url, exchange='365d.realtime.v1', workspace_ids
                     rabbit = None
                     try:
                         rabbit = rabbit_connect(state['source'])
-                        subscribe(rabbit, writer, workspace_ids, exchange, state['source'].role)
+                        subscribe(rabbit, writer, workspace_ids, exchange, state['source'].role,
+                                  customer_avatar_events=customer_avatar_events)
                         state['connection'] = rabbit
                     except ProjectionFailure:
                         close(rabbit)
@@ -146,7 +158,8 @@ def main():
     scopes = tuple(os.environ.get('CRM_TO_CHAT_WORKSPACE_IDS', '').split(','))
     if not scopes or any(not x.isascii() or not x.isdigit() or int(x) <= 0 for x in scopes):
         raise SystemExit('CRM_TO_CHAT_WORKSPACE_IDS must explicitly list allowed workspaces')
-    options = dict(instance_id=os.environ.get('CRM_TO_CHAT_AMQP_INSTANCE_ID', ''))
+    options = dict(instance_id=os.environ.get('CRM_TO_CHAT_AMQP_INSTANCE_ID', ''),
+                   customer_avatar_events=os.environ.get('CRM_TO_CHAT_CUSTOMER_AVATAR_EVENTS') == 'true')
     amqp_url = os.environ['CRM_TO_CHAT_AMQP_URL']
     brokers(amqp_url, options['instance_id'])
     import pymysql

@@ -94,6 +94,38 @@ class SnapshotEvent:
         return digest({"message": self.data["message"], "presentation": self.data.get("presentation", {})})
 
 
+@dataclass(frozen=True)
+class CustomerAvatarEvent:
+    event_id: str
+    workspace_id: str
+    customer_id: str
+    revision: int
+    data: dict
+
+    @property
+    def fingerprint(self):
+        return digest(self.data)
+
+
+def parse_customer_avatar_event(body: bytes) -> CustomerAvatarEvent:
+    fields = {"schemaVersion", "eventType", "eventId", "workspaceId", "customerId",
+              "revision", "emittedAt", "avatarUrl"}
+    data = object_fields(decode_json(body), fields, fields)
+    if type(data["schemaVersion"]) is not int or data["schemaVersion"] != 1:
+        raise ContractError("unsupported_schema_version")
+    if data["eventType"] != "customer.avatar.updated":
+        raise ContractError("unsupported_event_type")
+    workspace = db_id(data["workspaceId"])
+    customer = db_id(data["customerId"])
+    revision = db_id(data["revision"])
+    event_id = f"crm-msgsite-avatar:{workspace}:{customer}:{revision}"
+    if data["eventId"] != event_id:
+        raise ContractError("invalid_event_id")
+    canonical = dict(data, emittedAt=instant(data["emittedAt"]),
+                     avatarUrl=string(data["avatarUrl"], 600, nullable=True))
+    return CustomerAvatarEvent(event_id, workspace, customer, int(revision), canonical)
+
+
 def parse_event(body: bytes) -> SnapshotEvent:
     data = object_fields(decode_json(body),
         {"schemaVersion", "eventType", "eventId", "workspaceId", "revision", "emittedAt", "message", "presentation"},

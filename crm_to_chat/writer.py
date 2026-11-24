@@ -2,6 +2,7 @@
 import html
 import json
 from datetime import datetime, timedelta, timezone
+from .contracts import CustomerAvatarEvent
 from .errors import ContractError
 
 
@@ -40,8 +41,9 @@ def row_values(event):
 
 
 class ChatWriter:
-    def __init__(self, connection):
+    def __init__(self, connection, *, customer_avatar_events=False):
         self.connection = connection
+        self.customer_avatar_events = customer_avatar_events
 
     def apply(self, event):
         c = self.connection
@@ -56,28 +58,12 @@ class ChatWriter:
                         raise ContractError('event_id_conflict')
                     c.commit()
                     return 'duplicate'
-                values = row_values(event)
-                q.execute('SELECT conversation_id,revision,snapshot_hash,workspace_id FROM crm_contact_response '
-                          'WHERE msg_id=%s FOR UPDATE', (event.message_id,))
-                previous = q.fetchone()
-                if previous and str(previous['workspace_id']) != event.workspace_id:
-                    raise ContractError('message_workspace_conflict')
-                if previous and previous['revision'] == event.revision and previous['snapshot_hash'] != values['snapshot_hash']:
-                    raise ContractError('revision_conflict')
-                outcome = 'stale' if previous and previous['revision'] > event.revision else 'unchanged'
-                if not previous or previous['revision'] < event.revision:
-                    columns = list(values)
-                    q.execute('INSERT INTO crm_contact_response (' + ','.join(columns) + ') VALUES ('
-                              + ','.join(['%s'] * len(columns)) + ') ON DUPLICATE KEY UPDATE '
-                              + ','.join(f'{col}=VALUES({col})' for col in columns if col != 'msg_id'),
-                              [values[col] for col in columns])
-                    affected = {values['conversation_id']}
-                    if previous:
-                        affected.add(previous['conversation_id'])
-                    for conversation in sorted(affected):
-                        if conversation.startswith('crm_') and not conversation.startswith('crm_unlinked_'):
-                            self.refresh_summary(q, conversation)
-                    outcome = 'applied'
+                if isinstance(event, CustomerAvatarEvent):
+                    if not self.customer_avatar_events:
+                        raise ContractError('unsupported_event_type')
+                    outcome = self.apply_customer_avatar(q, event)
+                else:
+                    outcome = self.apply_snapshot(q, event)
                 q.execute('INSERT INTO crm_event_receipt (workspace_id,event_id,event_hash) VALUES (%s,%s,%s)',
                           (event.workspace_id, event.event_id, event.fingerprint))
             c.commit()
@@ -87,7 +73,54 @@ class ChatWriter:
             raise
 
     @staticmethod
-    def refresh_summary(q, conversation):
+    def apply_customer_avatar(q, event):
+        keys = (event.workspace_id, event.customer_id)
+        q.execute('SELECT revision FROM crm_customer_avatar WHERE workspace_id=%s AND customer_id=%s FOR UPDATE', keys)
+        previous = q.fetchone()
+        if previous and previous['revision'] >= event.revision:
+            return 'stale'
+        avatar = event.data['avatarUrl']
+        if previous:
+            q.execute('UPDATE crm_customer_avatar SET revision=%s,avatar_url=%s '
+                      'WHERE workspace_id=%s AND customer_id=%s', (event.revision, avatar, *keys))
+        else:
+            q.execute('INSERT INTO crm_customer_avatar (revision,avatar_url,workspace_id,customer_id) '
+                      'VALUES (%s,%s,%s,%s)', (event.revision, avatar, *keys))
+        q.execute('UPDATE chatwoot_conversation_update SET customer_avatar=%s '
+                  'WHERE conversation_id=%s AND table_id=7 AND msg_source_type=11 AND contact_id=%s '
+                  'AND EXISTS (SELECT 1 FROM crm_contact_response '
+                  'WHERE id=chatwoot_conversation_update.last_contact_response_id '
+                  'AND workspace_id=%s AND crm_customer_id=%s AND deleted=0)',
+                  (avatar or '', f'crm_{event.customer_id}', event.customer_id, *keys))
+        return 'applied'
+
+    def apply_snapshot(self, q, event):
+        values = row_values(event)
+        q.execute('SELECT conversation_id,revision,snapshot_hash,workspace_id FROM crm_contact_response '
+                  'WHERE msg_id=%s FOR UPDATE', (event.message_id,))
+        previous = q.fetchone()
+        if previous and str(previous['workspace_id']) != event.workspace_id:
+            raise ContractError('message_workspace_conflict')
+        if previous and previous['revision'] >= event.revision:
+            if previous['revision'] > event.revision:
+                return 'stale'
+            if previous['snapshot_hash'] != values['snapshot_hash']:
+                raise ContractError('revision_conflict')
+            return 'unchanged'
+        columns = list(values)
+        q.execute('INSERT INTO crm_contact_response (' + ','.join(columns) + ') VALUES ('
+                  + ','.join(['%s'] * len(columns)) + ') ON DUPLICATE KEY UPDATE '
+                  + ','.join(f'{col}=VALUES({col})' for col in columns if col != 'msg_id'),
+                  [values[col] for col in columns])
+        affected = {values['conversation_id']}
+        if previous:
+            affected.add(previous['conversation_id'])
+        for conversation in sorted(affected):
+            if conversation.startswith('crm_') and not conversation.startswith('crm_unlinked_'):
+                self.refresh_summary(q, conversation)
+        return 'applied'
+
+    def refresh_summary(self, q, conversation):
         # Only CRM-owned fields change. Existing no_need_reply, groups and labels survive.
         q.execute('SELECT COUNT(*) AS n,MIN(create_date) AS start_time FROM crm_contact_response '
                   'WHERE conversation_id=%s AND deleted=0', (conversation,))
@@ -99,6 +132,13 @@ class ChatWriter:
             q.execute('UPDATE chatwoot_conversation_update SET msg_count=0 WHERE conversation_id=%s', (conversation,))
             return
         p = json.loads(latest['content_attribute'])['presentation']
+        avatar = p.get('customerAvatar')
+        if self.customer_avatar_events:
+            q.execute('SELECT avatar_url FROM crm_customer_avatar WHERE workspace_id=%s AND customer_id=%s',
+                      (latest['workspace_id'], latest['crm_customer_id']))
+            profile = q.fetchone()
+            if profile:
+                avatar = profile['avatar_url']
         q.execute('INSERT INTO chatwoot_conversation_update (conversation_id,msg_count,table_id,last_role,'
                   'last_contact_response_id,income_name,customer_avatar,outgo_name,contact_id,inbox_name,'
                   'msg_source_type,msg_source_name,start_time,update_date) VALUES (%s,%s,7,%s,%s,%s,%s,%s,%s,%s,11,\'\',%s,%s) '
@@ -107,6 +147,6 @@ class ChatWriter:
                   'customer_avatar=VALUES(customer_avatar),outgo_name=VALUES(outgo_name),contact_id=VALUES(contact_id),'
                   'inbox_name=VALUES(inbox_name),msg_source_type=11,start_time=VALUES(start_time),update_date=VALUES(update_date)',
                   (conversation, aggregate['n'], latest['role'], latest['id'], (p.get('accountName') or 'CRM')[:100],
-                   (p.get('customerAvatar') or '')[:600], (p.get('customerName') or 'CRM')[:100],
+                   (avatar or '')[:600], (p.get('customerName') or 'CRM')[:100],
                    latest['crm_customer_id'], (p.get('accountName') or 'CRM')[:80],
                    aggregate['start_time'], latest['create_date']))

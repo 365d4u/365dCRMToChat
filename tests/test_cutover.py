@@ -7,7 +7,8 @@ import unittest
 from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import Mock
-from crm_to_chat.contracts import parse_event, projection
+from crm_to_chat.consume import CUSTOMER_AVATAR_ROUTE, receive_with
+from crm_to_chat.contracts import parse_customer_avatar_event, parse_event, projection
 from crm_to_chat.errors import ContractError
 from crm_to_chat.writer import ChatWriter, row_values
 from helpers import encoded, fixture
@@ -37,6 +38,8 @@ class Connection:
         columns = ','.join(f'{column} '+('INTEGER' if column in {'revision','workspace_id','role','deleted','crm_customer_id'} else 'TEXT') for column in values)
         self.db.executescript('CREATE TABLE crm_contact_response (id INTEGER PRIMARY KEY AUTOINCREMENT,'+columns+',labels TEXT DEFAULT "",UNIQUE(msg_id));'
             'CREATE TABLE crm_event_receipt(workspace_id TEXT,event_id TEXT,event_hash TEXT,PRIMARY KEY(workspace_id,event_id));'
+            'CREATE TABLE crm_customer_avatar(workspace_id TEXT,customer_id TEXT,revision INTEGER,avatar_url TEXT,'
+            'PRIMARY KEY(workspace_id,customer_id));'
             'CREATE TABLE chatwoot_conversation_update(conversation_id TEXT PRIMARY KEY,msg_count INT,table_id INT,last_role INT,'
             'last_contact_response_id INT,income_name TEXT,customer_avatar TEXT,outgo_name TEXT,contact_id TEXT,inbox_name TEXT,'
             'msg_source_type INT,msg_source_name TEXT,start_time TEXT,update_date TEXT,no_need_reply INT DEFAULT 0);')
@@ -44,6 +47,13 @@ class Connection:
     def begin(self): self.db.execute('BEGIN')
     def commit(self): self.db.commit()
     def rollback(self): self.db.rollback()
+
+
+def avatar_fixture(revision="1", url="https://example.test/avatar?token=current", workspace="1"):
+    return {"schemaVersion": 1, "eventType": "customer.avatar.updated",
+            "eventId": f"crm-msgsite-avatar:{workspace}:3001:{revision}", "workspaceId": workspace,
+            "customerId": "3001", "revision": revision, "avatarUrl": url,
+            "emittedAt": "2026-10-10T11:00:00Z"}
 
 
 class CutoverTests(unittest.TestCase):
@@ -91,6 +101,56 @@ class CutoverTests(unittest.TestCase):
         writer.apply(parse_event(encoded(deleted)))
         self.assertEqual(c.db.execute('SELECT msg_count FROM chatwoot_conversation_update WHERE conversation_id="crm_3002"').fetchone()[0],0)
         self.assertEqual(c.db.execute('SELECT deleted FROM crm_contact_response').fetchone()[0],1)
+
+    def test_avatar_updates_summary_without_rewriting_messages_and_survives_late_snapshots(self):
+        c = Connection()
+        writer = ChatWriter(c, customer_avatar_events=True)
+        first = fixture()
+        first['presentation'] = {'customerAvatar': 'old'}
+        writer.apply(parse_event(encoded(first)))
+        c.db.execute('UPDATE chatwoot_conversation_update SET no_need_reply=1')
+        c.commit()
+        before = dict(c.db.execute('SELECT * FROM crm_contact_response').fetchone())
+        updated = avatar_fixture('2')
+        event = parse_customer_avatar_event(encoded(updated))
+        self.assertEqual(writer.apply(event), 'applied')
+        self.assertEqual(writer.apply(event), 'duplicate')
+        self.assertEqual(dict(c.db.execute('SELECT * FROM crm_contact_response').fetchone()), before)
+        self.assertEqual(writer.apply(parse_customer_avatar_event(encoded(avatar_fixture()))), 'stale')
+        modified = dict(updated, avatarUrl='different')
+        with self.assertRaisesRegex(ContractError, 'event_id_conflict'):
+            writer.apply(parse_customer_avatar_event(encoded(modified)))
+        late = fixture(event_id='late-snapshot', revision='2')
+        late['presentation'] = {'customerAvatar': 'old', 'customerName': 'Updated name'}
+        writer.apply(parse_event(encoded(late)))
+        row = c.db.execute('SELECT * FROM chatwoot_conversation_update').fetchone()
+        self.assertEqual(row['customer_avatar'], updated['avatarUrl'])
+        self.assertEqual(row['outgo_name'], 'Updated name')
+        self.assertEqual(row['no_need_reply'], 1)
+
+    def test_avatar_clear_before_first_snapshot_and_workspace_scope(self):
+        c = Connection()
+        writer = ChatWriter(c, customer_avatar_events=True)
+        writer.apply(parse_customer_avatar_event(encoded(avatar_fixture(url=None))))
+        self.assertEqual(c.db.execute('SELECT COUNT(*) FROM chatwoot_conversation_update').fetchone()[0], 0)
+        first = fixture()
+        first['presentation'] = {'customerAvatar': 'old'}
+        writer.apply(parse_event(encoded(first)))
+        writer.apply(parse_customer_avatar_event(encoded(avatar_fixture('2', workspace='2'))))
+        self.assertEqual(c.db.execute('SELECT customer_avatar FROM chatwoot_conversation_update').fetchone()[0], '')
+
+    def test_avatar_route_validates_workspace_and_acknowledges_after_commit(self):
+        c = Connection()
+        writer = ChatWriter(c, customer_avatar_events=True)
+        channel = Mock()
+        method = SimpleNamespace(routing_key=CUSTOMER_AVATAR_ROUTE, delivery_tag=12)
+        receive = receive_with(writer, ('1',), 'primary', customer_avatar_events=True)
+        channel.basic_ack.side_effect = lambda **_: self.assertEqual(
+            c.db.execute('SELECT COUNT(*) FROM crm_customer_avatar').fetchone()[0], 1)
+        receive(channel, method, None, encoded(avatar_fixture()))
+        channel.basic_ack.assert_called_once_with(delivery_tag=12)
+        receive(channel, method, None, encoded(avatar_fixture(workspace='2')))
+        channel.basic_nack.assert_called_once_with(delivery_tag=12, requeue=False)
 
     def test_old_consumer_no_chat_db_calls_but_followup_and_forward_remain(self):
         path=Path(r'E:\PycharmProjects\respond_webhook\respond_to_msgsite\service\queue_handle.py')

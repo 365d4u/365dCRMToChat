@@ -1,0 +1,11 @@
+[Unit]
+Description=Run the legacy message-site CRM association backfill once at noon
+
+[Timer]
+OnCalendar=2026-11-25 12:00:00 Asia/Shanghai
+AccuracySec=1s
+Persistent=no
+Unit=365d-crm-legacy-link-backfill.service
+
+[Install]
+WantedBy=timers.target

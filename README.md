@@ -57,3 +57,12 @@ python -m unittest discover -s tests -v
 
 详见 [消息契约](docs/event-contract.md)、[验证结果](docs/verification.md)。日志不得输出正文、签名媒体链接或凭据。`ops/source-secrets.mjs` 只能通过私有 SSH 管道写入受限配置，禁止单独运行、打印或捕获输出。
 # 365dCRMToChat
+
+## Legacy conversation associations
+
+New CRM conversations use the CRM customer ID carried in RabbitMQ snapshots.
+The periodic legacy reference refresh is retired. A separate, one-time Nov 25
+backfill at 12:00 Asia/Shanghai uses the verified CRM export and only inserts
+missing historical conversation links. It skips unverified/conflicting aliases
+and preserves existing and previously revoked rows. It does not update the
+legacy Respond reference cache or start the message consumer.

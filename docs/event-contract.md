@@ -50,6 +50,6 @@ SQLite 仅用于预览，临时队列仅用于观察；正式写入入口为 `cr
 
 ## 头像更新
 
-`customer.avatar.updated` 使用 `crm.customer.avatar.v1`，沿用同一 Exchange、持久队列和单一写入器。载荷含 `schemaVersion=1`、`eventType`、`eventId`、`workspaceId`、`customerId`、`revision`、`emittedAt` 和可为空的 `avatarUrl`。事件 ID 格式为 `crm-msgsite-avatar:<workspaceId>:<customerId>:<revision>`。同一工作区和客户只保留最新头像及版本。事件可先于消息到达，老快照与重投不会覆盖新头像，更新时间和人工分组状态沿用会话摘要。
+`customer.avatar.updated` 使用 `crm.customer.avatar.v1`，绑定到独立持久队列 `365dCRMToChat.avatar.v1`，异常事件进入该队列的 `.invalid`。两个队列由同一个连接、线程和事务写入器处理。载荷含 `schemaVersion=1`、`eventType`、`eventId`、`workspaceId`、`customerId`、`revision`、`emittedAt` 和可为空的 `avatarUrl`。事件 ID 格式为 `crm-msgsite-avatar:<workspaceId>:<customerId>:<revision>`。同一工作区和客户只保留最新头像及版本。事件可先于消息到达，老快照与重投不会覆盖新头像，更新时间和人工分组状态沿用会话摘要。
 
 先应用 `migrations/chat_db_customer_avatar.sql`，再启用消费者的 `CRM_TO_CHAT_CUSTOMER_AVATAR_EVENTS` 并核验新绑定，最后启用 CRM 端发布。生产切换前核对既有工作区范围。停用时先停 CRM 新发布，等已发布头像事件处理完，再停用消费者的头像投影。若停用期间继续使用旧资料同步，重新启用前需以当前 CRM 资料核对已保存的头像状态。

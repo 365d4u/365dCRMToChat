@@ -15,6 +15,7 @@ from .rabbitmq import brokers, connect_broker
 QUEUE = '365dCRMToChat.snapshot.v1'
 DLQ = QUEUE + '.invalid'
 CUSTOMER_AVATAR_ROUTE = 'crm.customer.avatar.v1'
+CUSTOMER_AVATAR_QUEUE = '365dCRMToChat.avatar.v1'
 # Keep a small transport window without adding concurrent database writers.
 PREFETCH_COUNT = 8
 IO_WAIT_SECONDS = 0.25
@@ -35,8 +36,9 @@ def close(resource):
 def receive_with(writer, workspace_ids, role, *, customer_avatar_events=False):
     def receive(channel, method, properties, body):
         started = time.monotonic()
+        is_avatar = customer_avatar_events and getattr(method, 'routing_key', None) == CUSTOMER_AVATAR_ROUTE
         try:
-            if customer_avatar_events and getattr(method, 'routing_key', None) == CUSTOMER_AVATAR_ROUTE:
+            if is_avatar:
                 event = parse_customer_avatar_event(body)
             else:
                 event = parse_event(body)
@@ -56,6 +58,7 @@ def receive_with(writer, workspace_ids, role, *, customer_avatar_events=False):
         acked = time.monotonic()
         emitted = datetime.fromisoformat(event.data['emittedAt'].replace('Z', '+00:00')).timestamp()
         print(json.dumps({'event': 'projected', 'source': role, 'result': result,
+            'eventType': 'customer.avatar.updated' if is_avatar else 'message.snapshot',
             'parseMs': round((parsed - started) * 1000, 3),
             'writeMs': round((committed - parsed) * 1000, 3),
             'ackMs': round((acked - committed) * 1000, 3),
@@ -72,13 +75,20 @@ def subscribe(rabbit, writer, workspace_ids, exchange, role, *, customer_avatar_
     channel.queue_declare(queue=QUEUE, durable=True,
         arguments={'x-dead-letter-exchange': '', 'x-dead-letter-routing-key': DLQ})
     channel.queue_bind(queue=QUEUE, exchange=exchange, routing_key='crm.message.snapshot.v1')
-    if customer_avatar_events:
-        channel.queue_bind(queue=QUEUE, exchange=exchange, routing_key=CUSTOMER_AVATAR_ROUTE)
     channel.basic_qos(prefetch_count=PREFETCH_COUNT)
     channel.basic_consume(queue=QUEUE,
-        on_message_callback=receive_with(writer, workspace_ids, role,
-                                         customer_avatar_events=customer_avatar_events), auto_ack=False)
+        on_message_callback=receive_with(writer, workspace_ids, role), auto_ack=False)
+    if customer_avatar_events:
+        avatar_dlq = CUSTOMER_AVATAR_QUEUE + '.invalid'
+        channel.queue_declare(queue=avatar_dlq, durable=True)
+        channel.queue_declare(queue=CUSTOMER_AVATAR_QUEUE, durable=True,
+            arguments={'x-dead-letter-exchange': '', 'x-dead-letter-routing-key': avatar_dlq})
+        channel.queue_bind(queue=CUSTOMER_AVATAR_QUEUE, exchange=exchange, routing_key=CUSTOMER_AVATAR_ROUTE)
+        channel.basic_consume(queue=CUSTOMER_AVATAR_QUEUE,
+            on_message_callback=receive_with(writer, workspace_ids, role, customer_avatar_events=True),
+            auto_ack=False)
     print(json.dumps({'event': 'ready', 'source': role, 'queue': QUEUE,
+        'avatarQueue': CUSTOMER_AVATAR_QUEUE if customer_avatar_events else None,
         'prefetch': PREFETCH_COUNT, 'writers': 1}), flush=True)
 
 

@@ -5,7 +5,8 @@ from types import SimpleNamespace
 import unittest
 from unittest.mock import Mock, patch
 
-from crm_to_chat.consume import (IO_WAIT_SECONDS, PREFETCH_COUNT, ProjectionFailure,
+from crm_to_chat.consume import (CUSTOMER_AVATAR_QUEUE, CUSTOMER_AVATAR_ROUTE,
+                                 IO_WAIT_SECONDS, PREFETCH_COUNT, QUEUE, ProjectionFailure,
                                  receive_with, run, subscribe)
 from crm_to_chat.errors import IntegrationError
 from crm_to_chat.rabbitmq import Broker, brokers, connect_broker
@@ -98,6 +99,18 @@ class SingleBrokerTests(unittest.TestCase):
         rabbit = Mock()
         rabbit.is_open = True
         return rabbit
+
+    def test_avatar_subscription_uses_a_dedicated_queue_with_the_same_writer(self):
+        rabbit, writer = self.rabbit(), Mock()
+        channel = rabbit.channel()
+        with patch('crm_to_chat.consume.receive_with') as receive, redirect_stdout(StringIO()):
+            subscribe(rabbit, writer, ('1',), '365d.realtime.v1', 'primary', customer_avatar_events=True)
+        self.assertEqual([(call.kwargs['queue'], call.kwargs['routing_key'])
+                          for call in channel.queue_bind.call_args_list],
+                         [(QUEUE, 'crm.message.snapshot.v1'), (CUSTOMER_AVATAR_QUEUE, CUSTOMER_AVATAR_ROUTE)])
+        self.assertEqual([call.kwargs['queue'] for call in channel.basic_consume.call_args_list],
+                         [QUEUE, CUSTOMER_AVATAR_QUEUE])
+        self.assertTrue(all(call.args[0] is writer for call in receive.call_args_list))
 
     def test_one_transport_one_writer_and_commit_before_ack(self):
         db = Connection()

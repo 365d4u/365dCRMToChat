@@ -37,10 +37,11 @@ from equal numeric IDs or names. Latest user policy: prefer Go CRM(customerId),
 and fall back to Go Respond(respondId) when no usable CRM mapping exists and the
 legacy Respond identity is explicit and unambiguous. The fallback is navigation
 only; never re-enable legacy chat_db writes.
-Reference synchronization uses its dedicated oneshot service and timer, a
-source-restricted forced-command SSH key, and CRM-owned verified references.
-Only automatically-owned mapping rows may be refreshed or revoked. Preserve
-manual mappings, old message tables, runtime configuration and recovery backups.
+The recurring legacy reference importer is retired. The dedicated one-time
+backfill uses the source-restricted export to add only missing, verified legacy
+conversation links. Preserve existing and revoked mappings, old messages,
+runtime configuration and recovery backups. New CRM conversations derive their
+customer ID from the canonical queue snapshot.
 
 ## Main-only releases and temporary workspaces
 

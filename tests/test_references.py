@@ -1,7 +1,7 @@
 import hashlib,importlib.util,json,tempfile,unittest
 from pathlib import Path
 from unittest.mock import Mock
-from crm_to_chat.references import SCOPE,read_snapshot,history_links,plan_import,apply_import
+from crm_to_chat.references import SCOPE,read_snapshot,history_links
 
 class ReferenceTests(unittest.TestCase):
  def snapshot(self,rows,complete=True,scope=None):
@@ -35,66 +35,6 @@ class ReferenceTests(unittest.TestCase):
   self.assertEqual(links,{})
   self.assertEqual(stats,{'conflictingHistory':1,'unverifiedHistory':1})
 
- def test_protect_manual_history_owner(self):
-  q=Mock();q.fetchall.side_effect=[[{'conversation_id':'rd_765'}],[],
-   [{'conversation_id':'rd_765','crm_customer_id':3002,'verified':1,'evidence':'manual'}]]
-  links,stats=plan_import(q,{'765':('3001','1','2')})
-  self.assertEqual(links,{})
-  self.assertEqual(stats['protectedExistingLinks'],1)
-
- def test_database_error_rolls_back_batch(self):
-  db=Mock();q=Mock();db.cursor.return_value.__enter__=Mock(return_value=q)
-  db.cursor.return_value.__exit__=Mock(return_value=False);q.fetchall.return_value=[]
-  q.executemany.side_effect=RuntimeError('synthetic failure')
-  with self.assertRaises(RuntimeError):apply_import(db,{'765':('3001','1','2')},{})
-  db.rollback.assert_called_once();db.commit.assert_not_called()
-
- def database(self,old,history):
-  db=Mock();q=Mock();db.cursor.return_value.__enter__=Mock(return_value=q)
-  db.cursor.return_value.__exit__=Mock(return_value=False);q.fetchall.side_effect=[old,history]
-  return db,q
-
- def old_reference(self,cid='3001',revision=2):
-  return {'respond_id':'765','crm_customer_id':cid,'source_reference_id':1,'source_revision':revision,
-          'verified':1,'evidence':'crm-ref:v1:1:2'}
-
- def test_stale_snapshot_and_same_revision_owner_change_refused(self):
-  for cid,revision in [('3001',1),('3002',2)]:
-   db,q=self.database([self.old_reference()],[])
-   with self.assertRaises(ValueError):apply_import(db,{'765':(cid,'1',str(revision))},{})
-   q.executemany.assert_not_called()
-
- def test_higher_revision_rebind_revokes_old_history_first(self):
-  old_history=[{'conversation_id':'rd_765','crm_customer_id':'3001','verified':1,'evidence':'crm-ref:v1:old'}]
-  db,q=self.database([self.old_reference()],old_history)
-  counts=apply_import(db,{'765':('3002','1','3')},{'rd_765':('3002','crm-ref:v1:new')})
-  self.assertTrue(q.executemany.call_args_list[0].args[0].startswith('UPDATE crm_conversation_link SET verified=0'))
-  self.assertEqual(counts['revokedHistory'],1)
-  self.assertEqual(counts['referenceChanges'],1)
-  db.rollback.assert_not_called()
-
- def test_unverified_or_removed_reference_retracts_owned_link(self):
-  db,q=self.database([self.old_reference()],
-   [{'conversation_id':'rd_765','crm_customer_id':'3001','verified':1,'evidence':'crm-ref:v1:old'}])
-  counts=apply_import(db,{'766':('3002','2','3')},{})
-  self.assertEqual(counts['revokedReferences'],1)
-  self.assertEqual(counts['revokedHistory'],1)
-
- def test_real_mysql_parameter_formatting_for_revocations_and_inserts(self):
-  import pymysql
-  connection=pymysql.connect(defer_connect=True,charset='utf8mb4')
-  connection.server_status=0
-  try:
-   db,q=self.database([self.old_reference()],
-    [{'conversation_id':'rd_765','crm_customer_id':'3001','verified':1,'evidence':'crm-ref:v1:old'}])
-   apply_import(db,{'766':('3002','2','3')},{'rd_766':('3002','crm-ref:v1:new')})
-   with connection.cursor() as actual:
-    for call in q.executemany.call_args_list:
-     sql,values=call.args
-     for value in values:
-      rendered=actual.mogrify(sql,value)
-      self.assertIn('crm_',rendered)
-  finally:connection.close()
 
 class SearchIdentityTests(unittest.TestCase):
  @classmethod
